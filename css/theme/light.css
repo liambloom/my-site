@@ -1,0 +1,7 @@
+:root {
+  --background: white;
+  --background-secondary: #ddd;
+  --darker: var(--background-secondary);
+  --text: black;
+  --emphasis: #06f;
+}

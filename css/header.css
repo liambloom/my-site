@@ -1,0 +1,10 @@
+header {
+  background-color: var(--background);
+  box-shadow: 0px 0px 5px 5px var(--darker);
+  transition: 1.25s ease-in-out;
+  height: 57.5px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}

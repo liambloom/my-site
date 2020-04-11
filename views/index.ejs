@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html <% if (theme) { %> data-theme="<%- theme %>" <% } %>>
+<head>
+  <meta charset="utf8">
+
+  <% if (theme) { %>
+    <% const themeOpposite = theme === "light" ? "dark" : "light" %>
+    <link id="<%- theme %>-stylesheet" rel="stylesheet" href="/css/theme/<%- theme %>.css">
+    <link id="<%- themeOpposite %>-stylesheet" rel="preload" href="/css/theme/<%- themeOpposite %>.css" as="style">
+  <% } else { %>
+    <link id="light-stylesheet" rel="stylesheet" href="/css/theme/light.css" media="not all and (prefers-color-scheme: dark)">
+    <link id="dark-stylesheet" rel="stylesheet" href="/css/theme/dark.css" media="(prefers-color-scheme: dark)">
+  <% } %>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/input.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  
+  <script src="/js/globals.js" type="application/javascript" defer></script>
+  <script src="/js/theme.js" type="application/javascript" defer></script>
+</head>
+<body>
+  <header>
+    <!--<svg>
+      <use href="/svg/logo.svg#logo-bare"></use>
+    </svg>-->
+  </header>
+  <main>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat tincidunt dui, vel interdum diam cursus at.
+    Vestibulum orci arcu, pellentesque eu tincidunt a, laoreet ac felis. Nam sit amet leo sed dolor vulputate pellentesque.
+    Duis hendrerit interdum augue. Suspendisse tincidunt purus felis. Duis porttitor gravida dapibus. Phasellus pretium mi
+    vitae consectetur fringilla. Ut maximus lorem accumsan dolor aliquam, dapibus ultrices libero sodales. Aenean placerat
+    vestibulum urna quis volutpat. Vivamus ac massa ut est commodo accumsan. Sed malesuada nulla id molestie pellentesque.
+    
+    Ut id tortor quis sem venenatis luctus tempor a nulla. Nunc ultricies mauris id eleifend posuere. Suspendisse vitae elit
+    imperdiet, facilisis lorem ut, congue sapien. Curabitur efficitur, nulla malesuada gravida lacinia, erat metus posuere
+    augue, vel condimentum risus metus quis nisi. Vivamus ac faucibus orci. Phasellus et gravida augue. Praesent et lectus
+    nunc. Vestibulum efficitur sapien ipsum, et tristique eros pretium vitae. Donec et leo augue. Morbi sagittis quis est et
+    porta. Mauris a libero quis tellus viverra facilisis eget eget velit. Quisque in eros in elit pulvinar mattis eget id
+    libero. Vivamus eu faucibus sem. Vivamus dapibus feugiat auctor. Cras a feugiat sapien, quis molestie est.
+    
+    Suspendisse neque mi, gravida nec cursus nec, elementum blandit elit. In vel dictum diam, in ultricies mauris. In eu
+    nunc efficitur, convallis orci cursus, porttitor nisi. Nullam ac iaculis felis, sed egestas ante. Fusce nec aliquam
+    risus. In in elit nulla. Proin feugiat rhoncus rhoncus. Integer ornare mattis lobortis. Morbi mauris purus, sollicitudin
+    in consectetur nec, euismod quis ligula. Donec dignissim ex sit amet vestibulum venenatis. Class aptent taciti sociosqu
+    ad litora torquent per conubia nostra, per inceptos himenaeos. Donec semper auctor lectus, nec scelerisque nibh
+    imperdiet sit amet. Aliquam iaculis urna in erat hendrerit euismod. Curabitur ultrices a nulla nec pellentesque.
+    
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam vitae venenatis purus. Phasellus venenatis elementum
+    purus, eu consectetur libero auctor nec. Vivamus id metus purus. Lorem ipsum dolor sit amet, consectetur adipiscing
+    elit. Nullam in gravida nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+    
+    Pellentesque suscipit ante magna, nec mollis odio ornare et. Phasellus condimentum purus vitae ipsum tempor, sit amet
+    vehicula augue scelerisque. Duis in eleifend neque. Maecenas varius arcu a ultrices feugiat. Nunc euismod felis a
+    rhoncus pretium. Integer finibus mauris a viverra gravida. Etiam nec pellentesque quam. Nunc eget euismod odio. Praesent
+    eget ornare mi. In tempus dictum ex egestas ultricies. Nunc tincidunt bibendum nunc ac efficitur. Quisque mattis est
+    arcu, eu eleifend ex vestibulum vel. Sed quis euismod libero. In et urna pretium nisl ultricies fringilla eu non mi.
+  </main>
+  <footer>
+    This site uses cookies. <input type="button" value="I Accept Cookies!" class="highlight"> <input type="button" value="No cookies for me.">
+  </footer>
+</body>
+</html>
