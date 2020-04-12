@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html <% if (theme) { %> data-theme="<%- theme %>" <% } %>>
+
+<head>
+  <meta charset="utf8">
+
+  <% if (theme) { %>
+    <% const themeOpposite = theme === "light" ? "dark" : "light" %>
+    <link id="<%- theme %>-stylesheet" rel="stylesheet" href="/css/theme/<%- theme %>.css">
+    <link id="<%- themeOpposite %>-stylesheet" rel="preload" href="/css/theme/<%- themeOpposite %>.css" as="style">
+  <% } else { %>
+    <link id="light-stylesheet" rel="stylesheet" href="/css/theme/light.css" media="not all and (prefers-color-scheme: dark)">
+    <link id="dark-stylesheet" rel="stylesheet" href="/css/theme/dark.css" media="(prefers-color-scheme: dark)">
+  <% } %>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/input.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/modal.css">
+  
+  <script src="/js/globals.js" type="application/javascript" defer></script>
+  <script src="/js/theme.js" type="application/javascript" defer></script>
+  <script src="/js/modal.js" type="application/javascript" defer></script>
+
+  <script type="application/javascript">
+
+  </script>
+
+  <% if (hasImports) { %>
+    <%- include(importPath) %>
+  <% } %>
+</head>
+
+<body>
+  <header>
+    <!--<svg>
+      <use href="/svg/logo.svg#logo-bare"></use>
+    </svg>-->
+  </header>
+  <main>
+    <div id="current-page">
+      <%- include(__dirname + path, data) %>
+    </div>
+    <div id="next-page"></div>
+  </main>
+  <div id="overlay"></div>
+  <div class="modal popup open">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+  <footer>
+    This site uses cookies. <input type="button" value="I Accept Cookies!" class="highlight"> <input type="button" value="No cookies for me.">
+  </footer>
+</body>
+</html>

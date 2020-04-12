@@ -8,3 +8,6 @@ body {
 main {
   margin-top: 60px;
 }
+.hidden {
+  display: hidden;
+}

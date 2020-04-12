@@ -19,6 +19,7 @@
   "homepage": "https://github.com/liambloom/my-site#readme",
   "dependencies": {
     "ejs": "^3.0.2",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "http-status-codes": "^1.4.0"
   }
 }

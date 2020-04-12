@@ -1,0 +1,26 @@
+@supports (backdrop-filter: blur(5px)) {
+  #modal-overlay {
+    backdrop-filter: blur(5px);
+  }
+}
+@supports not (backdrop-filter: blur(5px)) {
+  /*body.blur > :not(.modal)*/
+  body.blur header, body.blur footer, body.blur main {
+    filter: blur(5px);
+  }
+}
+.modal {
+  display: hidden;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--background);
+  transition: background-color 500ms;
+}
+.modal.open {
+  display: fixed;
+}
+.modal .bottom {
+  background-color: var(--background-secondary);
+  transition: background-color 500ms;
+}

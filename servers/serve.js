@@ -1,30 +1,39 @@
 const url = require("url");
 const path = require("path");
 const fs = require("fs");
-
-function respond(res, data, status, type, callback = p => p) {
-  res.status(status).type(type);
-  res.write(callback(data));
-  res.end();
-}
-function respondEjs(res, path, options, status, callback) {
-  res.render(path, options, (err, html) => {
-    if (err) throw err;
-    else respond(res, html, status, "html", callback);
-  });
-}
+const ejs = require("ejs");
+const statusCodes = require("http-status-codes");
 
 function serve(req, res, next, data = {}, callback = p => p) {
-  const page = "." + req.fullUrl.pathname.replace(/\/$/, "/index");
+  const page = req.fullUrl.pathname;
   const type = path.extname(page);
   try {
+    res.type(type || "html");
     if (type) { // if not ejs
-      if (fs.existsSync(page)) respond(res, fs.readFileSync(page), 200, type);
-      else res.status(404).end();
+      if (fs.existsSync("." + page)) res.write(fs.readFileSync("." + page));
+      else res.status(404);
     }
     else {
-      if (fs.existsSync(`./views/${page}.ejs`)) respondEjs(res, page, data, 200, callback);
-      else respondEjs(res, "./404", {}, 404);
+      if (!fs.existsSync(`./views/pages/${page}.ejs`)) res.status(404);
+      let dir, path;
+      if (res.statusCode < 300) {
+        dir = "pages";
+        path = page;
+      }
+      else {
+        dir = "errors";
+        if (fs.existsSync(`./views/errors/${res.statusCode}.ejs`)) path = "/" + res.statusCode;
+        else {
+          res.locals.msg = `Error ${res.statusCode}: ${statusCodes.getStatusText(res.statusCode)}`;
+          path = "/template";
+        }
+      }
+      res.locals.path = `./views/${dir}${path}`;
+      const importPath = `./views/${dir}/imports/${path}.ejs`;
+      res.locals.hasImports = fs.existsSync(`./views/${importPath}.ejs`);
+      res.locals.importPath = importPath;
+      res.locals.status = res.statusCode;
+      res.write(res.renderSync("./template.ejs", { data }));
     }
   }
   catch (err) {
@@ -33,9 +42,9 @@ function serve(req, res, next, data = {}, callback = p => p) {
       res.type("html");
       res.write(`Uh Oh! Something Broke :(<br>${err}`);
     }
-    res.end();
     console.error(err);
   }
+  res.end();
 }
 
 module.exports = serve;
