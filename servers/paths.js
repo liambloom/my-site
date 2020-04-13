@@ -1,4 +1,5 @@
-const { main } = require("./init");
+const { app } = require("./init");
 const serve = require("./serve");
 
-main.get(/.*/, serve);
+app.get("*", serve);
+app.post("/pages*", serve);

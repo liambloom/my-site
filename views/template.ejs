@@ -5,9 +5,7 @@
   <meta charset="utf8">
 
   <% if (theme) { %>
-    <% const themeOpposite = theme === "light" ? "dark" : "light" %>
-    <link id="<%- theme %>-stylesheet" rel="stylesheet" href="/css/theme/<%- theme %>.css">
-    <link id="<%- themeOpposite %>-stylesheet" rel="preload" href="/css/theme/<%- themeOpposite %>.css" as="style">
+    <link id="theme-stylesheet" rel="stylesheet" href="/css/theme/<%- theme %>.css">
   <% } else { %>
     <link id="light-stylesheet" rel="stylesheet" href="/css/theme/light.css" media="not all and (prefers-color-scheme: dark)">
     <link id="dark-stylesheet" rel="stylesheet" href="/css/theme/dark.css" media="(prefers-color-scheme: dark)">
@@ -17,34 +15,31 @@
   <link rel="stylesheet" href="/css/header.css">
   <link rel="stylesheet" href="/css/footer.css">
   <link rel="stylesheet" href="/css/modal.css">
+
+  <!--<link rel="preload" href="<%#- "/pages" + url.pathname + url.search %>" as="fetch">-->
   
+  <script src="/js/page-loader.js" type="application/javascript"></script>
   <script src="/js/globals.js" type="application/javascript" defer></script>
   <script src="/js/theme.js" type="application/javascript" defer></script>
   <script src="/js/modal.js" type="application/javascript" defer></script>
 
-  <script type="application/javascript">
-
-  </script>
-
-  <% if (hasImports) { %>
-    <%- include(importPath) %>
-  <% } %>
+  <%# if (hasImports) { %>
+    <%#- include(importPath) %>
+  <%# } %>
 </head>
 
-<body>
+<body class="blur">
   <header>
     <!--<svg>
       <use href="/svg/logo.svg#logo-bare"></use>
     </svg>-->
   </header>
   <main>
-    <div id="current-page">
-      <%- include(__dirname + path, data) %>
-    </div>
+    <div id="current-page" style="height: 200vh;"></div>
     <div id="next-page"></div>
   </main>
-  <div id="overlay"></div>
-  <div class="modal popup open">
+  <div id="modal-overlay"></div>
+  <div id="loading-modal" class="modal popup open">
     <div class="loading-dot"></div>
     <div class="loading-dot"></div>
     <div class="loading-dot"></div>

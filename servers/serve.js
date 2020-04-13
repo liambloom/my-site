@@ -1,39 +1,39 @@
 const url = require("url");
 const path = require("path");
 const fs = require("fs");
-const ejs = require("ejs");
 const statusCodes = require("http-status-codes");
 
 function serve(req, res, next, data = {}, callback = p => p) {
-  const page = req.fullUrl.pathname;
+  let page = "." + req.fullUrl.pathname.replace(/\/$/, "/index");
   const type = path.extname(page);
   try {
     res.type(type || "html");
     if (type) { // if not ejs
-      if (fs.existsSync("." + page)) res.write(fs.readFileSync("." + page));
+      if (fs.existsSync(page)) res.write(fs.readFileSync(page));
       else res.status(404);
+      res.end();
     }
     else {
-      if (!fs.existsSync(`./views/pages/${page}.ejs`)) res.status(404);
-      let dir, path;
-      if (res.statusCode < 300) {
-        dir = "pages";
-        path = page;
+      let isTemplate = true;
+      if (/\/pages\//.test(page)) {
+        isTemplate = false;
+        if (!fs.existsSync(path.join("./views", page) + ".ejs")) res.status(404);
       }
-      else {
-        dir = "errors";
-        if (fs.existsSync(`./views/errors/${res.statusCode}.ejs`)) path = "/" + res.statusCode;
+      if (res.statusCode >= 300) {
+        if (fs.existsSync(path.join("./views/errors/", res.statusCode.toString()) + ".ejs")) page = path.join("./errors/", res.statusCode.toString());
         else {
-          res.locals.msg = `Error ${res.statusCode}: ${statusCodes.getStatusText(res.statusCode)}`;
-          path = "/template";
+          res.locals.errorMessage = `Error ${res.statusCode}: ${statusCodes.getStatusText(res.statusCode)}`;
+          page = "./errors/default";
         }
       }
-      res.locals.path = `./views/${dir}${path}`;
-      const importPath = `./views/${dir}/imports/${path}.ejs`;
-      res.locals.hasImports = fs.existsSync(`./views/${importPath}.ejs`);
-      res.locals.importPath = importPath;
-      res.locals.status = res.statusCode;
-      res.write(res.renderSync("./template.ejs", { data }));
+      else if (!/\/pages\//.test(page)) page = "./template";
+      res.render(page, { data }, (err, html) => {
+        if (err) throw err;
+        else {
+          res.write(html);
+          res.end();
+        }
+      });
     }
   }
   catch (err) {
@@ -41,10 +41,10 @@ function serve(req, res, next, data = {}, callback = p => p) {
     if (!type || type === ".html") {
       res.type("html");
       res.write(`Uh Oh! Something Broke :(<br>${err}`);
+      res.end();
     }
     console.error(err);
   }
-  res.end();
 }
 
 module.exports = serve;

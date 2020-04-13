@@ -10,7 +10,8 @@
   }
 }
 .modal {
-  display: hidden;
+  position: fixed;
+  display: none;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -18,7 +19,15 @@
   transition: background-color 500ms;
 }
 .modal.open {
-  display: fixed;
+  display: initial;
+}
+#modal-overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .modal .bottom {
   background-color: var(--background-secondary);
