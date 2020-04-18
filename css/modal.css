@@ -15,11 +15,21 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+.modal:not(.no-body) {
   background-color: var(--background);
-  transition: background-color 500ms;
+  border-radius: 5px;
+  min-width: 300px;
+  max-width: 60vw;
+  min-height: 150px;
+  max-height: 10vh;
+  overflow: hidden;
 }
 .modal.open {
   display: initial;
+}
+.modal.popup {
+  animation: open-modal 1000ms ease-in-out forwards;
 }
 #modal-overlay {
   position: fixed;
@@ -29,7 +39,25 @@
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.modal .bottom {
+.modal:not(.no-body) .content {
+  margin: 10px;
+  text-align: center;
+}
+.modal:not(.no-body) .bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   background-color: var(--background-secondary);
   transition: background-color 500ms;
+  text-align: right;
+}
+@keyframes open-modal {
+  from {
+    top: -5px;
+    transform: translate(-50%, -100%);
+  }
+  to {
+    top: 10%;
+    transform: translate(-50%, 0);
+  }
 }
