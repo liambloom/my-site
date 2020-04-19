@@ -1,3 +1,5 @@
+let notInitialLoading = false;
+
 function transition (event) {
   event.preventDefault();
   history.pushState(null, "", this.href);
@@ -14,7 +16,11 @@ function transitionLinks () {
 function loadPage () {
   "use strict";
   window.pageLoadState = "loading";
-  //if (!Modal.openModal) Modal.open(document.getElementById("loading-modal"));
+  if (notInitialLoading) {
+    while (Modal.openModal) Modal.close();
+    Modal.open(document.getElementById("loading-modal"));
+  }
+  else notInitialLoading = true;
   document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
   const now = new Date();
   fetch("/pages" + location.pathname, {
@@ -31,7 +37,8 @@ function loadPage () {
       return { page, imports };
     })
     .then(({page, imports}) => Promise.all([
-      new Promise((resolve) => { // imports
+      new Promise(resolve => { // imports
+        let importPromises = [];
         if (imports) {
           for (let e of Array.from(imports.children)) {
             if (e.tagName === "SCRIPT") { // For some reason, Firefox won't let me 
@@ -39,13 +46,15 @@ function loadPage () {
               e = document.createElement("script");
               for (let attr of og.attributes) e.setAttribute(attr.name, attr.value);
             }
+            importPromises.push(new Promise(resolveImport => {
+              e.addEventListener("load", resolveImport);
+            }));
             document.head.appendChild(e);
           }
         }
-        resolve();
+        resolve(Promise.all(importPromises));
       }),
-      new Promise((resolve) => { // page
-        console.log(page.innerHTML);
+      new Promise(resolve => { // page
         document.getElementById("current-page").innerHTML = page.innerHTML;
         resolve();
       })

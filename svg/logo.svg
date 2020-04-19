@@ -29,6 +29,10 @@
         <stop offset="10%" style="stop-color:#f5c;stop-opacity:1"/>
         <stop offset="100%" style="stop-color:#f09;stop-opacity:1"/>
       </linearGradient>
+      <linearGradient id="blue" x1="0%" y1="70%" x2="100%" y2="50%">
+        <stop offset="0%" style="stop-color:#26f;stop-opacity:1"/>
+        <stop offset="80%" style="stop-color:#22f;stop-opacity:1"/>      
+      </linearGradient>
      </defs>
      <symbol id="logo-bare" viewBox="0, 0, 115, 100" preserveAspectRatio="midXmidY meet">
       <path d="M 11,0
@@ -71,7 +75,7 @@
                l -20,50
                l -20,-13
                l -20,12
-               z" fill="#22f" stroke="none"/>
+               z" fill="url(#blue)" stroke="none"/>
       <circle cx="120" cy="30" r="22.5" fill="url(#purple)" stroke="none"/>
       <path d="M 30,2
                l -27.5,30

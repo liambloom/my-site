@@ -11,3 +11,7 @@ main {
 .hidden {
   display: none;
 }
+a.blend {
+  text-decoration: none;
+  color: var(--text);
+}
