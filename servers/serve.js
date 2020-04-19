@@ -22,8 +22,9 @@ function serve(req, res, next, data = {}, callback = p => p) {
       if (res.statusCode >= 300) {
         if (fs.existsSync(path.join("./views/errors/", res.statusCode.toString()) + ".ejs")) page = path.join("./errors/", res.statusCode.toString());
         else {
+          res.locals.errorCode = res.statusCode;
           res.locals.errorMessage = `Error ${res.statusCode}: ${statusCodes.getStatusText(res.statusCode)}`;
-          page = "./errors/default";
+          page = "./errors/template";
         }
       }
       else if (!/\/pages\//.test(page)) page = "./template";
@@ -40,7 +41,7 @@ function serve(req, res, next, data = {}, callback = p => p) {
     res.status(500);
     if (!type || type === ".html") {
       res.type("html");
-      res.write(`Uh Oh! Something Broke :(<br>${err}`);
+      res.write(`Uh Oh! Something Broke :(<br>${err.toString().replace(/</g, "&lt;")}`);
       res.end();
     }
     console.error(err);

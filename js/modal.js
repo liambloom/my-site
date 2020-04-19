@@ -18,7 +18,7 @@ class Modal { // Make this a class to make it easier to make modals
           }
         </div>
       </div>
-    `)[0];
+    `).children[0];
     document.body.appendChild(modal);
     return modal;
   }
@@ -72,7 +72,7 @@ Modal.queue = [];
 Modal.openModal = document.getElementById("loading-modal");
 window.Modal = Modal;
 window.alert = function alert (text) {
-  const modal = new Modal({ text: text.replace(/</g, "&lt;") });
+  const modal = new Modal({ text: text.replace(/<(?!br>)/g, "&lt;") });
   Modal.open(modal);
   modal.querySelector('input[type="button"]').addEventListener("click", Modal.close);
   return new Promise(resolve => {
@@ -83,7 +83,7 @@ window.alert = function alert (text) {
 };
 window.confirm = function confirm (text) {
   const modal = new Modal({
-    text: text.replace(/</g, "&lt;"),
+    text: text.replace(/<(?!br>)/g, "&lt;"),
     buttons: "ok/cancel",
     closeOnBlur: false
   });
@@ -102,7 +102,7 @@ window.confirm = function confirm (text) {
 };
 window.prompt = function confirm (text) {
   const modal = new Modal({
-    text: `${text.replace(/</g, "&lt;")}<br><input type="text">`,
+    text: `${text.replace(/<(?!br>)/g, "&lt;")}<br><input type="text">`,
     buttons: "ok/cancel"
   });
   Modal.open(modal);

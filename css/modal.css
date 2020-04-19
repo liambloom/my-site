@@ -48,7 +48,7 @@
   bottom: 0;
   width: 100%;
   background-color: var(--background-secondary);
-  transition: background-color 500ms;
+  transition: background-color 1.25s ease-in-out;
   text-align: right;
 }
 @keyframes open-modal {
