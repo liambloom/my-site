@@ -4,10 +4,17 @@
 header {
   background-color: var(--background);
   box-shadow: 0px 0px 5px 5px var(--darker);
-  transition: 1.25s ease-in-out;
+  transition-property: background-color, color;
+  transition-timing-function: ease-in-out;
+  transition-duration: 1.25s;
   height: var(--header-height);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+}
+header #logo {
+  height: 35px;
+  margin: calc((var(--header-height) - 35px) / 2);
+  margin-left: 50px;
 }
