@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+  version="1.1"
+  baseProfile="full"
+  width="300"
+  height="200"
+  xmlns="http://www.w3.org/2000/svg">
+  <symbol id="swirly" viewBox="0, 0, 100, 100">
+    <path
+            style="fill:none;fill-opacity:0;stroke:url(#linearGradient6702);stroke-width:12.80589676;stroke-miterlimit:9.9439249;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+            id="path5138"
+            d="M -12.90395,210.81681 C -13.486792,393.61587 97.025813,96.820506 -32.644775,225.66683 -162.31536,354.51316 135.17868,245.8954 -47.620383,245.31256 -230.41945,244.72972 66.375917,355.24232 -62.47041,225.57174 -191.31674,95.901147 -82.69898,393.39519 -82.116138,210.59613 -81.533296,27.797064 -192.0459,324.59243 -62.375313,195.7461 67.295275,66.899775 -230.19877,175.51753 -47.399705,176.10037 135.39936,176.68321 -161.396,66.17061 -32.549679,195.8412 96.296647,325.51179 -12.321109,28.017743 -12.90395,210.81681 Z"
+            transform="rotate(25,16.889432,510.88678)" />
+  </symbol>
+  <use href="#swirly" fill="pink" stroke="black"/>
+</svg>

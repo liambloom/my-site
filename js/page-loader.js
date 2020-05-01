@@ -13,6 +13,11 @@ function transitionLinks () {
     }
   }
 }
+function loaded () {
+  Modal.close();
+  window.pageLoadState = "complete";
+  window.dispatchEvent(new Event("page-loaded"));
+}
 function loadPage () {
   "use strict";
   window.pageLoadState = "loading";
@@ -41,7 +46,7 @@ function loadPage () {
         let importPromises = [];
         if (imports) {
           for (let e of Array.from(imports.children)) {
-            if (e.tagName === "SCRIPT") { // For some reason, Firefox won't let me 
+            if (e.tagName === "SCRIPT") { // This is defined as a function in globals, but I don't want to wait everything to be fetched, parsed, and run before I can do anything.
               const og = e;
               e = document.createElement("script");
               for (let attr of og.attributes) e.setAttribute(attr.name, attr.value);
@@ -62,12 +67,14 @@ function loadPage () {
     .then(() => {
       transitionLinks();
     })  
-    .then(() => {
-      Modal.close();
-      window.pageLoadState = "complete";
-      window.dispatchEvent(new Event("page-loaded"));
+    .catch(err => {
+      if (document.readyState === "complete") handle(err);
+      else document.addEventListener("load", () => handle(err));
     })
-    .catch(handle);
+    .finally(() => {
+      if (document.readyState === "complete") loaded();
+      else document.addEventListener("load", loaded);
+    });
 }
 window.addEventListener("popstate", () => {
   Modal.open(document.getElementById("loading-modal"));

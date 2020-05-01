@@ -4,7 +4,7 @@
 header {
   background-color: var(--background);
   box-shadow: 0px 0px 5px 5px var(--darker);
-  transition-property: background-color, color;
+  transition-property: background-color, color, box-shadow;
   transition-timing-function: ease-in-out;
   transition-duration: 1.25s;
   height: var(--header-height);
@@ -17,4 +17,25 @@ header #logo {
   height: 35px;
   margin: calc((var(--header-height) - 35px) / 2);
   margin-left: 50px;
+}
+header #open-menu-container {
+  height: calc(var(--header-height) * 3 / 4);
+  width: calc(var(--header-height) * 3 / 4);
+  margin: calc(var(--header-height) / 8);
+  border-radius: 50%;
+}
+/*[data-theme="light"] header #open-menu-container:focus {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme="dark"] header #open-menu-container:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+}*/
+header #open-menu {
+  height: calc(var(--header-height) / 4);
+  width: calc(var(--header-height) * 5 / 16);
+  margin: auto;
+  margin: calc(var(--header-height) / 4) calc(var(--header-height) * 7 / 32);
+}
+header #open-menu rect {
+  fill: var(--text);
 }

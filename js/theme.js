@@ -1,8 +1,9 @@
 "use strict";
 
+if (document.documentElement.getAttribute("data-theme") === null) document.documentElement.setAttribute("data-theme", matchMedia("(prefers-color-scheme: dark)") ? "dark" : "light");
 Object.defineProperties(window, {
   theme: {
-    get: () => document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)") ? "dark" : "light"),
+    get: () => document.documentElement.getAttribute("data-theme"),
     set: value => {
       if (value !== "light" && value !== "dark") throw new Error(value + " is not a valid theme");
       if (value === document.documentElement.getAttribute("data-theme")) return;

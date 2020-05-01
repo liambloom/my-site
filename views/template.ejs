@@ -21,7 +21,7 @@
 
   <!--<link rel="preload" href="<%#- "/pages" + url.pathname + url.search %>" as="fetch">-->
   
-  <script src="/js/page-loader.js" type="application/javascript"></script>
+  <script src="/js/page-loader.js" type="application/javascript" async></script>
   <script src="/js/globals.js" type="application/javascript" defer></script>
   <script src="/js/theme.js" type="application/javascript" defer></script>
   <script src="/js/modal.js" type="application/javascript" defer></script>
@@ -33,6 +33,13 @@
 
 <body class="blur">
   <header>
+    <div id="open-menu-container">
+      <svg id="open-menu" viewBox="0, 0, 125, 100">
+        <rect x="0" y="0" width="125" height="20" />
+        <rect x="0" y="40" width="125" height="20" />
+        <rect x="0" y="80" width="125" height="20" />
+      </svg>
+    </div>
     <img id="logo" src="/svg/ltag.svg">
     <!--<svg>
       <use href="/svg/logo.svg#logo-bare"></use>
