@@ -70,6 +70,21 @@ Modal.close = Modal.close.bind(Modal);
 Modal.overlay = document.getElementById("modal-overlay");
 Modal.queue = [];
 Modal.openModal = document.getElementById("loading-modal");
+Modal.loading = {
+  start () {
+    if (Modal.openModal) {
+      Modal.queue.unshift(this.modal, Modal.openModal);
+      Modal.close();
+    }
+    else Modal.open(this.modal);
+  },
+  end () {
+    if (Modal.openModal === this.modal) Modal.close();
+    Modal.queue = Modal.queue.filter(modal => modal !== this.modal);
+  },
+  modal: document.getElementById("loading-modal"),
+  isOpen: true
+};
 window.Modal = Modal;
 window.alert = function alert (text) {
   const modal = new Modal({ text: text.replace(/<(?!br>)/g, "&lt;") });

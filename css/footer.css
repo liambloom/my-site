@@ -5,5 +5,10 @@ footer {
   left: 0;
   padding: 10px;
   text-align: center;
-  border-top: 1px solid var(--darker)
+  border-top: 1px solid var(--darker);
+  background-color: var(--background);
+  transition-property: border-top, background-color;
+  transition-duration: 1.25s;
+  transition-timing-function: ease-in-out;
+  z-index: 1;
 }

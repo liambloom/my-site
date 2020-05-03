@@ -14,17 +14,14 @@ function transitionLinks () {
   }
 }
 function loaded () {
-  Modal.close();
+  Modal.loading.end();
   window.pageLoadState = "complete";
   window.dispatchEvent(new Event("page-loaded"));
 }
 function loadPage () {
   "use strict";
   window.pageLoadState = "loading";
-  if (notInitialLoading) {
-    while (Modal.openModal) Modal.close();
-    Modal.open(document.getElementById("loading-modal"));
-  }
+  if (notInitialLoading) Modal.loading.open();
   else notInitialLoading = true;
   document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
   const now = new Date();
@@ -51,6 +48,7 @@ function loadPage () {
               e = document.createElement("script");
               for (let attr of og.attributes) e.setAttribute(attr.name, attr.value);
             }
+            e.setAttribute("data-for-page", location.pathname);
             importPromises.push(new Promise(resolveImport => {
               e.addEventListener("load", resolveImport);
             }));
@@ -73,8 +71,13 @@ function loadPage () {
     })
     .finally(() => {
       if (document.readyState === "complete") loaded();
-      else document.addEventListener("load", loaded);
+      else window.addEventListener("load", loaded);
     });
+
+  // This is run asynchronously at the same time as the page is being fetched
+  for (let e of Array.from(document.querySelectorAll("[data-for-page]"))) {
+    if (e.getAttribute("data-for-page") !== locaiton.pathname) e.remove();
+  }
 }
 window.addEventListener("popstate", () => {
   Modal.open(document.getElementById("loading-modal"));
