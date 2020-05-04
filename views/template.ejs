@@ -34,178 +34,34 @@
 
 <body class="blur">
   <header>
-    <ul id="menu">
+    <nav>
       <li>
+        <svg id="close-menu" viewBox="0, 0, 125, 100">
+          <rect width="70.7107" height="20" class="fill-txt" x="0" y="50" transform="rotate(-45, 0, 50)"/>
+          <rect x="10" y="40" width="115" height="20" class="fill-txt"/>
+          <rect width="70.7107" height="20" class="fill-txt" x="0" transform="rotate(45, 0, 50)" y="30"/>
+        </svg>
+      </li>
+      <li class="menu">
         Foo
         <ul>
           <li>you</li>
           <li>me</li>
         </ul>
       </li>
-      <li>
+      <li class="menu">
         Bar
         <ul>
           <li>hi</li>
           <li>bye</li>
         </ul>
       </li>
-    </ul>
+    </nav>
     <div id="open-menu-container">
       <svg id="open-menu" viewBox="0, 0, 125, 100">
-        <rect x="0" y="0" width="125" height="20">
-          <animateTransform
-            data-direction="forwards"
-            attributeName="transform"
-            type="rotate"
-            from="0"
-            to="-45"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animateTransform
-            data-direction="backwards"
-            attributeName="transform"
-            type="rotate"
-            from="-45"
-            to="0"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animateMotion
-            data-direction="forwards"
-            path="
-              M 0, 0
-              V 50"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animateMotion
-            data-direction="backwards"
-            path="
-              M 0, 50
-              V 0"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="forwards"
-            attributeName="width"
-            from="125"
-            to="70.7107"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="backwards"
-            attributeName="width"
-            from="70.7107"
-            to="125"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-        </rect>
-        <rect x="0" y="40" width="125" height="20" fill="black">
-          <animate
-            data-direction="forwards"
-            attributeName="x"
-            from="0"
-            to="10"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="backwards"
-            attributeName="x"
-            from="10"
-            to="0"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="forwards"
-            attributeName="width"
-            from="125"
-            to="115"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="backwards"
-            attributeName="width"
-            from="115"
-            to="125"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-        </rect>
-        <rect x="0" y="80" width="125" height="20">
-          <animateTransform
-            data-direction="forwards"
-            attributeName="transform"
-            type="rotate"
-            from="0, 0, 80"
-            to="45, 0, 80"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animateTransform
-            data-direction="backwards"
-            attributeName="transform"
-            type="rotate"
-            from="45, 0, 80"
-            to="0, 0, 80"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animateMotion
-            data-direction="forwards"
-            path="
-              M 0, 0
-              l 14.1421, -44.1421"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animateMotion
-            data-direction="backwards"
-            path="
-              M 14.1421, -44.1421
-              L 0, 0 "
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="forwards"
-            attributeName="width"
-            from="125"
-            to="70.7107"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-          <animate
-            data-direction="backwards"
-            attributeName="width"
-            from="70.7107"
-            to="125"
-            dur="500ms"
-            repeatCount="1"
-            begin="indefinite"
-            fill="freeze"/>
-        </rect>
+        <rect x="0" y="0" width="125" height="20" class="fill-txt"/>
+        <rect x="0" y="40" width="125" height="20" fill="black" class="fill-txt"/>
+        <rect x="0" y="80" width="125" height="20" class="fill-txt"/>
       </svg>
     </div>
     <img id="logo" src="/svg/ltag.svg">

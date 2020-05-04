@@ -28,7 +28,7 @@ header {
 #open-menu-container {
   cursor: pointer;
   position: relative;
-  z-index: 4;
+  z-index: 3;
 }
 /*[data-theme="light"] header #open-menu-container:focus {
   background-color: rgba(0, 0, 0, 0.1);
@@ -37,14 +37,19 @@ header {
   background-color: rgba(255, 255, 255, 0.1);
 }*/
 #open-menu {
-  height: calc(var(--header-height) / 4);
-  width: calc(var(--header-height) * 5 / 16);
   margin: calc(var(--header-height) / 4) calc(var(--header-height) * 7 / 32);
+  height: calc(var(--header-height) / 4);
 }
-#open-menu rect {
+#close-menu {
+  height: 1em;
+}
+/*#open-menu, #close-menu {
+  width: calc(var(--header-height) * 5 / 16);
+}*/
+.fill-txt {
   fill: var(--text);
 }
-#menu {
+nav {
   margin: 0;
   padding: 0;
   width: 300px;
@@ -53,43 +58,44 @@ header {
   position: fixed;
   transition: left 500ms, background-color 1.25s ease-in-out;
   top: 0;
-  z-index: 3;
+  z-index: 4;
   height: 100vh;
   left: -300px;
-  padding-top: var(--header-height);
+  /*padding-top: var(--header-height);*/
   line-height: 1em;
   overflow-x: hidden;
   overflow-y: auto;
 }
-#menu.open {
+nav.open {
   left: 0;
 }
-#menu li {
+nav li {
   padding: calc((var(--header-height) - 1em) / 2);
   list-style-type: none;
-  border-top: 1px solid var(--background-secondary);
+  border-bottom: 1px solid var(--background-secondary);
   height: 1em;
-  position: relative;
   cursor: pointer;
 }
-#menu li:last-child {
-  border-bottom: 1px solid var(--background-secondary);
+nav ul {
+  transform: translateX(100%);
+  padding: 0;
+  width: 300px;
+  position: absolute;
+  left: 0;
+  top: var(--header-height);
 }
-#menu li::after {
+nav li.menu::after { /* nav li:has( ul)::after -- unfortunately, this isn't supported in any browsers */
   content: "";
   display: block;
-  position: absolute;
+  position: relative;
   width: 0;
   height: 0;
-  right: calc((var(--header-height) - 1em) / 2);
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(50%, -50%);
   border-width: 5px;
   border-style: solid;
   border-color: transparent;
   border-left-color: var(--text);
   transition: border-left-color 1.25s ease-in-out;
-}
-#menu ul {
-  transform: translateX(100%);
+  float: right;
 }
