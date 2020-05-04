@@ -1,5 +1,6 @@
 :root {
   --header-height: 57.5px;
+  --nav-width: 300px;
 }
 header {
   background-color: var(--background);
@@ -50,9 +51,7 @@ header {
   fill: var(--text);
 }
 nav {
-  margin: 0;
-  padding: 0;
-  width: 300px;
+  width: var(--nav-width);
   max-width: 100vw;
   background-color: var(--darker);
   position: fixed;
@@ -60,11 +59,15 @@ nav {
   top: 0;
   z-index: 4;
   height: 100vh;
-  left: -300px;
+  left: calc(0px - var(--nav-width));
   /*padding-top: var(--header-height);*/
   line-height: 1em;
   overflow-x: hidden;
   overflow-y: auto;
+}
+nav ul {
+  margin: 0;
+  padding: 0;
 }
 nav.open {
   left: 0;
@@ -76,10 +79,10 @@ nav li {
   height: 1em;
   cursor: pointer;
 }
-nav ul {
+nav ul ul {
   transform: translateX(100%);
   padding: 0;
-  width: 300px;
+  width: var(--nav-width);
   position: absolute;
   left: 0;
   top: var(--header-height);
