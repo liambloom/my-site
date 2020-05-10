@@ -35,22 +35,28 @@
 <body class="blur">
   <header>
     <nav>
+      <div id="back">
+        <svg id="close-menu" viewBox="0, 0, 125, 100">
+          <rect width="70.7107" height="20" class="fill-txt" x="0" y="50" transform="rotate(-45, 0, 50)"/>
+          <rect x="10" y="40" width="115" height="20" class="fill-txt"/>
+          <rect width="70.7107" height="20" class="fill-txt" x="0" transform="rotate(45, 0, 50)" y="30"/>
+        </svg>
+      </div>
       <ul>
         <li>
-          <svg id="close-menu" viewBox="0, 0, 125, 100">
-            <rect width="70.7107" height="20" class="fill-txt" x="0" y="50" transform="rotate(-45, 0, 50)"/>
-            <rect x="10" y="40" width="115" height="20" class="fill-txt"/>
-            <rect width="70.7107" height="20" class="fill-txt" x="0" transform="rotate(45, 0, 50)" y="30"/>
-          </svg>
-        </li>
-        <li class="menu">
           Foo
           <ul>
-            <li>you</li>
+            <li>
+              you
+              <ul>
+                <li>yes</li>
+                <li>no</li>
+              </ul>
+            </li>
             <li>me</li>
           </ul>
         </li>
-        <li class="menu">
+        <li>
           Bar
           <ul>
             <li>hi</li>

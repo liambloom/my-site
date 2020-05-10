@@ -65,14 +65,17 @@ nav {
   overflow-x: hidden;
   overflow-y: auto;
 }
-nav ul {
+nav.open ul {
   margin: 0;
   padding: 0;
+  position: relative;
+  right: 0;
+  transition: right 500ms;
 }
 nav.open {
   left: 0;
 }
-nav li {
+nav #back, nav li {
   padding: calc((var(--header-height) - 1em) / 2);
   list-style-type: none;
   border-bottom: 1px solid var(--background-secondary);
@@ -85,7 +88,7 @@ nav ul ul {
   width: var(--nav-width);
   position: absolute;
   left: 0;
-  top: var(--header-height);
+  top: 0;
 }
 nav li.menu::after { /* nav li:has( ul)::after -- unfortunately, this isn't supported in any browsers */
   content: "";
