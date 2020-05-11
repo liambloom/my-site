@@ -4,9 +4,7 @@ window.currentPage = undefined;
 
 function transition (event) {
   event.preventDefault();
-  const state = history.state || {};
-  delete state.menuDepth;
-  history.pushState(state, "", this.href);
+  history.pushState(menu.clearedState, "", this.href);
   loadPage();
 }
 function transitionLinks () {
@@ -23,8 +21,9 @@ function loaded () {
   window.dispatchEvent(new Event("page-loaded"));
 }
 function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
+  //console.log(`${currentPage} -${window.currentPage === location.href ? "/" : "-"}-> ${location.href}`);
   "use strict";
-  if (window.currentPage === location.href) return Promise.resolve(false);
+  if (window.currentPage === location.href) return menu.updateMenuState().then(() => false);
   window.pageLoadState = "loading";
   if (notInitialLoading) Modal.loading.start();
   else notInitialLoading = true;
@@ -68,9 +67,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
           resolve();
         })
       ]))
-      .then(() => {
-        transitionLinks();
-      })
+      .then(transitionLinks)
       .catch(err => {
         if (document.readyState === "complete") handle(err);
         else document.addEventListener("load", () => handle(err));
@@ -85,21 +82,28 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       window.currentPage = location.href;
       if (document.readyState === "complete") loaded();
       else window.addEventListener("load", loaded);
+      history.replaceState(menu.clearedState, "");
+      menu.updateMenuState(); // Run asynchronously, NOT awaited
       return true;
     });  
 }
 window.addEventListener("popstate", event => {
-  console.log("popstate");
-  console.log(event);
+  //console.log("popstate");
+  //console.log(event);
+  //console.log(event.state === history.state);
   loadPage()
-    .then(() => {
+    .then(menu.updateMenuState/*() => {
       if (event.state && event.state.menuDepth) {
         if (menu.depth !== (event.state && event.state.menuDepth)) {
           menu.depth = event.state.menuDepth;
         }
+        menu.open();
       }
-      else menu.close();
-    });
+      else {
+        menu._depth = (event.state && event.state.menuDepth) || 0;
+        menu.close();
+      }
+    }*/);
 });
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadPage);
 else loadPage();

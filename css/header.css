@@ -65,15 +65,17 @@ nav {
   overflow-x: hidden;
   overflow-y: auto;
 }
-nav.open ul {
+nav.open {
+  left: 0;
+}
+nav ul {
   margin: 0;
   padding: 0;
   position: relative;
   right: 0;
-  transition: right 500ms;
 }
-nav.open {
-  left: 0;
+nav.open ul {
+  transition: right 500ms;
 }
 nav #back, nav li {
   padding: calc((var(--header-height) - 1em) / 2);
@@ -84,11 +86,13 @@ nav #back, nav li {
 }
 nav ul ul {
   transform: translateX(100%);
-  padding: 0;
   width: var(--nav-width);
-  position: absolute;
+  position: absolute !important;
   left: 0;
   top: 0;
+}
+nav ul ul:not(.sub-open) {
+  display: none;
 }
 nav li.menu::after { /* nav li:has( ul)::after -- unfortunately, this isn't supported in any browsers */
   content: "";
