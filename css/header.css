@@ -77,6 +77,15 @@ nav ul {
 nav.open ul {
   transition: right 500ms;
 }
+nav ul.bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+nav ul.bottom li {
+  border-bottom: none;
+  border-top: 1px solid var(--background-secondary);
+}
 nav #back, nav li {
   padding: calc((var(--header-height) - 1em) / 2);
   list-style-type: none;

@@ -1,3 +1,5 @@
+// The menu isn't perfect, but I spent way too long on it, and it works good enough
+
 const openMenuContainer = document.getElementById("open-menu-container");
 
 var menu = {
@@ -11,7 +13,8 @@ var menu = {
       //console.log("resolved");
       try {
         console.log(menu.depth);
-        if (menu.depth) history.go(-menu.depth);
+        const depth = history.state && history.state.menuDepth || 0;
+        if (depth) history.go(-depth);
         if (currentPage !== location.href) throw new Error("Menu cannot be closed if it was never opened"); // This will probably never run, as it only runs after use is redirected
         menu._depth = -1;
         menu.depth = 1;
@@ -39,17 +42,27 @@ var menu = {
     else this.open();
   },
   initSubMenus (subMenu = this.listElement) {
+    console.log("children of ", subMenu);
     for (let li of subMenu.children) {
+      console.log(li);
+      const liSubMenu = li.getElementsByTagName("ul")[0];
       if (li.getElementsByTagName("ul").length) {
         li.classList.add("menu");
-        li.addEventListener("click", () => {
-          if (menu.isOpen) {
-            li.getElementsByTagName("ul")[0].classList.add("sub-open");
+        li.addEventListener("click", event => {
+          //if (menu.isOpen) {
+            event.stopPropagation();
+            liSubMenu.classList.add("sub-open");
             menu.depth++;
+            console.log(menu.depth, li);
             menu.pushDepth();
-          }
+          //}
         });
-        this.initSubMenus(li);
+        if (liSubMenu) this.initSubMenus(liSubMenu);
+      }
+      else {
+        li.addEventListener("click", event => {
+          event.stopPropagation();
+        });
       }
     }
   },
@@ -59,19 +72,17 @@ var menu = {
     if (menu.open) state.menuDepth = menu.depth;
     history.pushState(state, "");
   },
-  updateMenuState () {
+  async updateMenuState () {
     if (history.state && history.state.menuDepth) {
       if (menu.depth !== (history.state && history.state.menuDepth)) {
         menu.depth = history.state.menuDepth;
       }
-      return menu.open();
+      await menu.open();
     }
     else {
       //menu._depth = (history.state && history.state.menuDepth) || 1;
-      return menu.close()
-        .then(() => {
-          menu.depth = 1;
-        });
+      await menu.close();
+      //menu.depth = 1;
     }
   },
   get clearedState () {
@@ -91,12 +102,17 @@ var menu = {
     return this._depth;
   },
   set depth (value) {
+    const prev = this.depth;
     if (value === this.depth) return;
     if (value < 1) handle(new RangeError(`Menu depth cannot be set to ${value}, must be 1 or greater`));
     this._depth = value;
-    for (let ul of Array.from(document.querySelectorAll("nav" + " ul".repeat(this.depth + 1) + ".sub-open"))) {
-      ul.classList.remove("sub-open");
-    }
+    setTimeout(() => {
+      for (let ul of Array.from(document.querySelectorAll("nav" + " ul".repeat(this.depth + 1) + ".sub-open"))) {
+        ul.classList.remove("sub-open");
+      }
+      console.log("invisabled");
+    }, value < prev ? 500 : 0);
+    console.log(value, prev);
     menu.listElement.style.right = (menu.depth - 1) * menu.listElement.clientWidth + "px";
   },
   get isOpen () {
