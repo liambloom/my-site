@@ -5,7 +5,7 @@ class Modal { // Make this a class to make it easier to make modals
     buttons = buttons || "ok";
     buttons.toLowerCase();
     if (typeof closeOnBlur !== "boolean") closeOnBlur = true;
-    const modal = window.parseHTML(`
+    const modal = parseHTML(`
       <div class="modal popup" ${closeOnBlur ? "data-close-on-blur" : ""}>
         <div class="content">${text}</div>
         <div class="bottom">
@@ -86,7 +86,7 @@ Modal.loading = {
   isOpen: true
 };
 window.Modal = Modal;
-window.alert = function alert (text) {
+function alert (text) {
   const modal = new Modal({ text: text.replace(/<(?!br>)/g, "&lt;") });
   Modal.open(modal);
   modal.querySelector('input[type="button"]').addEventListener("click", Modal.close);
@@ -96,7 +96,7 @@ window.alert = function alert (text) {
     });
   });
 };
-window.confirm = function confirm (text) {
+ function confirm (text) {
   const modal = new Modal({
     text: text.replace(/<(?!br>)/g, "&lt;"),
     buttons: "ok/cancel",
@@ -115,7 +115,7 @@ window.confirm = function confirm (text) {
     });
   });
 };
-window.prompt = function confirm (text) {
+function confirm (text) {
   const modal = new Modal({
     text: `${text.replace(/<(?!br>)/g, "&lt;")}<br><input type="text">`,
     buttons: "ok/cancel"

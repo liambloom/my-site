@@ -1,6 +1,6 @@
 const openMenuContainer = document.getElementById("open-menu-container");
 
-window.menu = {
+var menu = {
   async open() {
     //console.log("pre-open");
     if (await this._transition(true)) this.pushDepth();

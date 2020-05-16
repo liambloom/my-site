@@ -1,6 +1,7 @@
-let notInitialLoading = false;
+"use strict";
 
-window.currentPage = undefined;
+let notInitialLoading = false;
+var currentPage, pageLoadState;
 
 function transition (event) {
   event.preventDefault();
@@ -22,18 +23,16 @@ function loaded () {
 }
 function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
   //console.log(`${currentPage} -${window.currentPage === location.href ? "/" : "-"}-> ${location.href}`);
-  "use strict";
-  if (window.currentPage === location.href) return menu.updateMenuState().then(() => false);
-  window.pageLoadState = "loading";
+  if (currentPage === location.href) return menu.updateMenuState().then(() => false);
+  pageLoadState = "loading";
   if (notInitialLoading) Modal.loading.start();
   else notInitialLoading = true;
   document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
-  const now = new Date();
   return Promise.all([
     fetch("/pages" + location.pathname, {
       method: "POST",
       body: JSON.stringify({
-        timestamp: now.getTime()
+        timestamp: new Date().getTime()
       })
     })
       .then(page => page.text())
@@ -79,7 +78,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
     }
   ])
     .then(() => {
-      window.currentPage = location.href;
+      currentPage = location.href;
       if (document.readyState === "complete") loaded();
       else window.addEventListener("load", loaded);
       history.replaceState(menu.clearedState, "");

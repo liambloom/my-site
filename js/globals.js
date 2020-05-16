@@ -1,18 +1,18 @@
 "use strict";
 
-window.root = document.documentElement;
+var root = document.documentElement;
 const domParser = new DOMParser();
-window.parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
-window.handle = async err => {
+var parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
+async function handle (err) {
   console.error(err);
   if (await confirm("An error has occurred. The page will now reload<br><br>" + err)) location.reload();
-};
-window.remakeElement = el => {
+}
+function remakeElement (el) {
   const newEl = document.createElement(el.tagName);
   for (let attr of el.attributes) newEl.setAttribute(attr.name, attr.value);
   return newEl;
-};
-window.type = {
+}
+var type = {
   check (value, ...types) {
     let typeString = "type ";
     switch (types.length) {

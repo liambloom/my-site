@@ -11,7 +11,7 @@ Object.defineProperties(window, {
       const mediaStyle = document.getElementById(value + "-stylesheet");
       if (mediaStyle) {
         mediaStyle.removeAttribute("media");
-        document.getElementById(window.themeOpposite + "-stylesheet").remove();
+        document.getElementById(themeOpposite + "-stylesheet").remove();
       }
       else {
         const newStyle = document.createElement("link");
@@ -19,7 +19,7 @@ Object.defineProperties(window, {
         newStyle.href = `/css/theme/${value}.css`;
         newStyle.id = `${value}-stylesheet`;
         newStyle.addEventListener("load", () => {
-          document.getElementById(`${window.themeOpposite}-stylesheet`).remove();
+          document.getElementById(`${themeOpposite}-stylesheet`).remove();
         });
         document.head.appendChild(newStyle);
       }
@@ -27,7 +27,7 @@ Object.defineProperties(window, {
     enumerable: true
   },
   themeOpposite: {
-    get: () => window.theme === "light" ? "dark" : "light",
+    get: () => theme === "light" ? "dark" : "light",
     enumerable: true
   }
 });

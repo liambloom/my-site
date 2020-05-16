@@ -1,6 +1,8 @@
 @supports (backdrop-filter: blur(5px)) {
   #modal-overlay {
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px); 
+    /* This throws a warning in firefox, even though backdrop-filter isn't supported
+    however, any css in this supports tag is not applied (I checked) */
   }
 }
 @supports not (backdrop-filter: blur(5px)) {
