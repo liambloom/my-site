@@ -28,8 +28,6 @@ var menu = {
           * Go forward
           * No menu is open
          */
-        /*history.replaceState(this.clearedState, "");
-        if (menu.isOpen) this.close();*/
         if (currentPage !== location.href) throw new Error("Menu cannot be closed if it was never opened"); // This will probably never run, as it only runs after use is redirected
         menu._depth = -1;
         menu.depth = 1;
@@ -38,13 +36,10 @@ var menu = {
         handle(err);
       }
     }
-    return await new Promise(resolve => { // This seems redundant, but IDK how to await setImmediate.
-      setImmediate(() => {
-        this.forceClosed = false;
-        console.log("post-close\n", new Error());
-        console.log(history.state);
-        resolve();
-      });
+    await setImmediateAsync(() => {
+      this.forceClosed = false;
+      console.log("post-close\n", new Error());
+      console.log(history.state);
     });
   },
   _transition (forwards) {

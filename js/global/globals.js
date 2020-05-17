@@ -56,3 +56,14 @@ if (!window.setImmediate) {
   window.setImmediate = callback => setTimeout(callback, 0);
   window.clearImmediate = clearTimeout;
 }
+function setTimeoutAsync (callback, delay, ...args){
+  return new Promise(resolve => {
+    setTimeout(() => {
+      callback();
+      resolve();
+    }, delay, ...args);
+  });
+}
+function setImmediateAsync (callback, ...args) {
+  return setTimeoutAsync(callback, 0, ...args);
+}
