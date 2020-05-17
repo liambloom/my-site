@@ -4,17 +4,41 @@ const openMenuContainer = document.getElementById("open-menu-container");
 
 var menu = {
   async open() {
-    //console.log("pre-open");
+    console.log(this.forceClosed);
+    console.log("pre-open\n", new Error());
     if (await this._transition(true)) this.pushDepth();
+    console.log("post-open\n", new Error());
   },
   async close() {
-    //console.log("pre-close");
+    this.forceClosed = true;
+    console.log("pre-close\n", new Error());
     if (await this._transition(false)) {
       //console.log("resolved");
       try {
-        console.log(menu.depth);
+        console.log(menu.depth, "\n", new Error());
         const depth = history.state && history.state.menuDepth || 0;
         if (depth) history.go(-depth);
+        history.replaceState(Object.apply({id: Math.random()}, this.clearedState), "");
+        console.log("replaced state", history.state);
+        /**
+         * There is a bug with this
+         * steps to replicate bug:
+          * Open menu
+          * Exit menu by clicking page
+          * Hit back
+          * Open menu
+          * Exit menu by clicking page
+          * The menu will then close and re-open
+          * Unfortunately, the pop-state event is triggered before I can replace the state with a cleared one :(
+         * Another bug:
+          * Open menu
+          * Go deeper
+          * Go back
+          * Go forward
+          * No menu is open
+         */
+        /*history.replaceState(this.clearedState, "");
+        if (menu.isOpen) this.close();*/
         if (currentPage !== location.href) throw new Error("Menu cannot be closed if it was never opened"); // This will probably never run, as it only runs after use is redirected
         menu._depth = -1;
         menu.depth = 1;
@@ -23,6 +47,14 @@ var menu = {
         handle(err);
       }
     }
+    return await new Promise(resolve => { // This seems redundant, but IDK how to await setImmediate.
+      setImmediate(() => {
+        this.forceClosed = false;
+        console.log("post-close\n", new Error());
+        console.log(history.state);
+        resolve();
+      });
+    });
   },
   _transition (forwards) {
     //console.log(this.isOpen, forwards);
@@ -42,9 +74,9 @@ var menu = {
     else this.open();
   },
   initSubMenus (subMenu = this.listElement) {
-    console.log("children of ", subMenu);
+    //console.log("children of ", subMenu);
     for (let li of subMenu.children) {
-      console.log(li);
+      //console.log(li);
       const liSubMenu = li.getElementsByTagName("ul")[0];
       if (li.getElementsByTagName("ul").length) {
         li.classList.add("menu");
@@ -53,7 +85,7 @@ var menu = {
             event.stopPropagation();
             liSubMenu.classList.add("sub-open");
             menu.depth++;
-            console.log(menu.depth, li);
+            //console.log(menu.depth, li);
             menu.pushDepth();
           //}
         });
@@ -71,8 +103,15 @@ var menu = {
     const state = this.clearedState;
     if (menu.open) state.menuDepth = menu.depth;
     history.pushState(state, "");
+    console.log("pushed state", history.state);
   },
   async updateMenuState () {
+    console.log(history.state);
+    console.log(history.state && history.state.menuDepth);
+    if (this.forceClosed && history.state && history.state.menuDepth) {
+      history.replaceState(this.clearedState, ""); 
+      console.log("replaced state", history.state);
+    }
     if (history.state && history.state.menuDepth) {
       if (menu.depth !== (history.state && history.state.menuDepth)) {
         menu.depth = history.state.menuDepth;
@@ -113,14 +152,15 @@ var menu = {
       for (let ul of uls) {
         ul.classList.remove("sub-open");
       }
-      console.log("invisabled");
+      //console.log("invisabled");
     }, value < prev ? 500 : 0);
-    console.log(value, prev);
+    //console.log(value, prev);
     menu.listContainer.style.right = (menu.depth - 1) * menu.listContainer.clientWidth + "px";
   },
   get isOpen () {
     return this.element.classList.contains("open");
-  }
+  },
+  forceClosed: false
 };
 for (let e in menu) {
   if (typeof menu[e] === "function") menu[e] = menu[e].bind(menu);

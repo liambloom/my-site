@@ -6,6 +6,7 @@ var currentPage, pageLoadState;
 function transition (event) {
   event.preventDefault();
   history.pushState(menu.clearedState, "", this.href);
+  console.log("pushed state", history.state);
   loadPage();
 }
 function transitionLinks () {
@@ -22,6 +23,7 @@ function loaded () {
   window.dispatchEvent(new Event("page-loaded"));
 }
 function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
+  console.log("popstate");
   //console.log(`${currentPage} -${window.currentPage === location.href ? "/" : "-"}-> ${location.href}`);
   if (currentPage === location.href) return menu.updateMenuState().then(() => false);
   pageLoadState = "loading";
@@ -82,27 +84,11 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       if (document.readyState === "complete") loaded();
       else window.addEventListener("load", loaded);
       history.replaceState(menu.clearedState, "");
+      console.log("replaced state", history.state);
       menu.updateMenuState(); // Run asynchronously, NOT awaited
       return true;
     });  
 }
-window.addEventListener("popstate", event => {
-  //console.log("popstate");
-  //console.log(event);
-  //console.log(event.state === history.state);
-  loadPage()
-    .then(menu.updateMenuState/*() => {
-      if (event.state && event.state.menuDepth) {
-        if (menu.depth !== (event.state && event.state.menuDepth)) {
-          menu.depth = event.state.menuDepth;
-        }
-        menu.open();
-      }
-      else {
-        menu._depth = (event.state && event.state.menuDepth) || 0;
-        menu.close();
-      }
-    }*/);
-});
+window.addEventListener("popstate", loadPage);
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadPage);
 else loadPage();

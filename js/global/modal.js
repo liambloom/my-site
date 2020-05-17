@@ -96,7 +96,7 @@ function alert (text) {
     });
   });
 };
- function confirm (text) {
+function confirm (text) {
   const modal = new Modal({
     text: text.replace(/<(?!br>)/g, "&lt;"),
     buttons: "ok/cancel",
@@ -115,7 +115,7 @@ function alert (text) {
     });
   });
 };
-function confirm (text) {
+function prompt (text) {
   const modal = new Modal({
     text: `${text.replace(/<(?!br>)/g, "&lt;")}<br><input type="text">`,
     buttons: "ok/cancel"
