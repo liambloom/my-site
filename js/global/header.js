@@ -18,18 +18,9 @@ var menu = {
         console.log(menu.depth, "\n", new Error());
         const depth = history.state && history.state.menuDepth || 0;
         if (depth) history.go(-depth);
-        history.replaceState(Object.apply({id: Math.random()}, this.clearedState), "");
+        history.replaceState(this.clearedState, "");
         console.log("replaced state", history.state);
         /**
-         * There is a bug with this
-         * steps to replicate bug:
-          * Open menu
-          * Exit menu by clicking page
-          * Hit back
-          * Open menu
-          * Exit menu by clicking page
-          * The menu will then close and re-open
-          * Unfortunately, the pop-state event is triggered before I can replace the state with a cleared one :(
          * Another bug:
           * Open menu
           * Go deeper
