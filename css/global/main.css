@@ -15,3 +15,6 @@ a.blend {
   text-decoration: none;
   color: var(--text);
 }
+#prev-page {
+  display: none;
+}

@@ -68,23 +68,31 @@ nav {
 nav.open {
   left: 0;
 }
+#lists {
+  position: relative;
+  right: 0;
+  height: calc(100% - var(--header-height) - 1px);
+}
+nav.open #lists {
+  transition: right 500ms;
+}
 nav ul {
   margin: 0;
   padding: 0;
-  position: relative;
-  right: 0;
 }
-nav.open ul {
+/*nav.open ul {
   transition: right 500ms;
-}
-nav ul.bottom {
+  /*min-height: calc(100% - var(--header-height) - 1px);*/
+/*}*/
+#lists > ul:last-child {
   position: absolute;
   bottom: 0;
   width: 100%;
 }
-nav ul.bottom li {
+#lists > ul:last-child li {
   border-bottom: none;
   border-top: 1px solid var(--background-secondary);
+  width: calc(100% - var(--header-height) + 1em);
 }
 nav #back, nav li {
   padding: calc((var(--header-height) - 1em) / 2);
@@ -93,14 +101,14 @@ nav #back, nav li {
   height: 1em;
   cursor: pointer;
 }
-nav ul ul {
+nav ul ul, #settings {
   transform: translateX(100%);
   width: var(--nav-width);
-  position: absolute !important;
+  position: absolute;
   left: 0;
   top: 0;
 }
-nav ul ul:not(.sub-open) {
+nav ul ul:not(.sub-open), #settings:not(.sub-open) {
   display: none;
 }
 nav li.menu::after { /* nav li:has( ul)::after -- unfortunately, this isn't supported in any browsers */

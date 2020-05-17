@@ -97,6 +97,7 @@ var menu = {
   get listElement () {
     return this.element.getElementsByTagName("ul")[0];
   },
+  listContainer: document.getElementById("lists"),
   _depth: 1,
   get depth () {
     return this._depth;
@@ -107,13 +108,15 @@ var menu = {
     if (value < 1) handle(new RangeError(`Menu depth cannot be set to ${value}, must be 1 or greater`));
     this._depth = value;
     setTimeout(() => {
-      for (let ul of Array.from(document.querySelectorAll("nav" + " ul".repeat(this.depth + 1) + ".sub-open"))) {
+      const uls = Array.from(document.querySelectorAll("nav" + " ul".repeat(this.depth + 1) + ".sub-open"));
+      if (this.depth === 2 && settings.classList.contains("sub-open")) uls.push(settings);
+      for (let ul of uls) {
         ul.classList.remove("sub-open");
       }
       console.log("invisabled");
     }, value < prev ? 500 : 0);
     console.log(value, prev);
-    menu.listElement.style.right = (menu.depth - 1) * menu.listElement.clientWidth + "px";
+    menu.listContainer.style.right = (menu.depth - 1) * menu.listContainer.clientWidth + "px";
   },
   get isOpen () {
     return this.element.classList.contains("open");

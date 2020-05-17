@@ -12,20 +12,21 @@
     <link id="light-stylesheet" rel="stylesheet" href="/css/theme/light.css" media="not all and (prefers-color-scheme: dark)">
     <link id="dark-stylesheet" rel="stylesheet" href="/css/theme/dark.css" media="(prefers-color-scheme: dark)">
   <% } %>
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/input.css">
-  <link rel="stylesheet" href="/css/header.css">
-  <link rel="stylesheet" href="/css/footer.css">
-  <link rel="stylesheet" href="/css/modal.css">
-  <link rel="stylesheet" href="/css/transition.css">
+  <link rel="stylesheet" href="/css/global/main.css">
+  <link rel="stylesheet" href="/css/global/input.css">
+  <link rel="stylesheet" href="/css/global/header.css">
+  <link rel="stylesheet" href="/css/global/footer.css">
+  <link rel="stylesheet" href="/css/global/modal.css">
+  <link rel="stylesheet" href="/css/global/settings.css">
 
   <!--<link rel="preload" href="<%#- "/pages" + url.pathname + url.search %>" as="fetch">-->
   
-  <script src="/js/page-loader.js" type="application/javascript" async></script>
-  <script src="/js/globals.js" type="application/javascript" defer></script>
-  <script src="/js/theme.js" type="application/javascript" defer></script>
-  <script src="/js/modal.js" type="application/javascript" defer></script>
-  <script src="/js/header.js" type="application/javascript" defer></script>
+  <script src="/js/global/page-loader.js" type="application/javascript" async></script>
+  <script src="/js/global/globals.js" type="application/javascript" defer></script>
+  <script src="/js/global/theme.js" type="application/javascript" defer></script>
+  <script src="/js/global/modal.js" type="application/javascript" defer></script>
+  <script src="/js/global/header.js" type="application/javascript" defer></script>
+  <script src="/js/global/settings.js" type="application/javascript" defer></script>
 
   <%# if (hasImports) { %>
     <%#- include(importPath) %>
@@ -42,31 +43,38 @@
           <rect width="70.7107" height="20" class="fill-txt" x="0" transform="rotate(45, 0, 50)" y="30"/>
         </svg>
       </div>
-      <ul>
-        <li>
-          Foo
-          <ul>
-            <li>
-              you
-              <ul>
-                <li>yes</li>
-                <li>no</li>
-              </ul>
-            </li>
-            <li>me</li>
-          </ul>
-        </li>
-        <li>
-          Bar
-          <ul>
-            <li>hi</li>
-            <li>bye</li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="bottom">
-        <li class="menu">Settings</li>
-      </ul>
+      <div id="lists">
+        <ul>
+          <li>
+            Foo
+            <ul>
+              <li>
+                you
+                <ul>
+                  <li>yes</li>
+                  <li>no</li>
+                </ul>
+              </li>
+              <li>me</li>
+            </ul>
+          </li>
+          <li>
+            Bar
+            <ul>
+              <li>hi</li>
+              <li>bye</li>
+            </ul>
+          </li>
+        </ul>
+        <ul>
+          <li id="enter-settings" class="menu">
+            Settings
+            <div id="settings">
+              This is the settings menu
+            </div>
+          </li>
+        </ul>
+      </div>
     </nav>
     <div id="open-menu-container">
       <svg id="open-menu" viewBox="0, 0, 125, 100">

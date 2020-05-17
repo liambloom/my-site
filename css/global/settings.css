@@ -1,0 +1,5 @@
+#settings {
+  height: calc(100vh - var(--header-height));
+  bottom: 0;
+  top: unset;
+}

@@ -52,3 +52,7 @@ var type = {
   },
   allowWrapperClasses: false
 };
+if (!window.setImmediate) {
+  window.setImmediate = callback => setTimeout(callback, 0);
+  window.clearImmediate = clearTimeout;
+}
