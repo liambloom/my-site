@@ -4,30 +4,15 @@ const openMenuContainer = document.getElementById("open-menu-container");
 
 var menu = {
   async open() {
-    console.log(this.forceClosed);
-    console.log("pre-open\n", new Error());
     if (await this._transition(true)) this.pushDepth();
-    console.log("post-open\n", new Error());
   },
   async close() {
     this.forceClosed = true;
-    console.log("pre-close\n", new Error());
     if (await this._transition(false)) {
-      //console.log("resolved");
       try {
-        console.log(menu.depth, "\n", new Error());
         const depth = history.state && history.state.menuDepth || 0;
         if (depth) history.go(-depth);
         history.replaceState(this.clearedState, "");
-        console.log("replaced state", history.state);
-        /**
-         * Another bug:
-          * Open menu
-          * Go deeper
-          * Go back
-          * Go forward
-          * No menu is open
-         */
         if (currentPage !== location.href) throw new Error("Menu cannot be closed if it was never opened"); // This will probably never run, as it only runs after use is redirected
         menu._depth = -1;
         menu.depth = 1;
@@ -38,16 +23,11 @@ var menu = {
     }
     await setImmediateAsync(() => {
       this.forceClosed = false;
-      console.log("post-close\n", new Error());
-      console.log(history.state);
     });
   },
   _transition (forwards) {
-    //console.log(this.isOpen, forwards);
-    //console.log(new Error());
     if (this.isOpen === forwards) return Promise.resolve(false);
     else return new Promise(resolve => {
-      //console.log(forwards ? "open" : "close");
       menu.element.addEventListener("transitionend", () => resolve());
       if (!this.isOpen && this.depth !== 1) handle(new Error("The error should never be thrown: The menu is closed but not at the top level"));
       document[(forwards ? "add" : "remove") + "EventListener"]("click", menu._closeOnClickOut);
@@ -60,20 +40,15 @@ var menu = {
     else this.open();
   },
   initSubMenus (subMenu = this.listElement) {
-    //console.log("children of ", subMenu);
     for (let li of subMenu.children) {
-      //console.log(li);
       const liSubMenu = li.getElementsByTagName("ul")[0];
       if (li.getElementsByTagName("ul").length) {
         li.classList.add("menu");
         li.addEventListener("click", event => {
-          //if (menu.isOpen) {
-            event.stopPropagation();
-            liSubMenu.classList.add("sub-open");
-            menu.depth++;
-            //console.log(menu.depth, li);
-            menu.pushDepth();
-          //}
+          event.stopPropagation();
+          menu.depth++;
+          liSubMenu.classList.add("sub-open");
+          menu.pushDepth();
         });
         if (liSubMenu) this.initSubMenus(liSubMenu);
       }
@@ -85,30 +60,17 @@ var menu = {
     }
   },
   pushDepth () {
-    //console.log("pushed");
     const state = this.clearedState;
     if (menu.open) state.menuDepth = menu.depth;
     history.pushState(state, "");
-    console.log("pushed state", history.state);
   },
   async updateMenuState () {
-    console.log(history.state);
-    console.log(history.state && history.state.menuDepth);
-    if (this.forceClosed && history.state && history.state.menuDepth) {
-      history.replaceState(this.clearedState, ""); 
-      console.log("replaced state", history.state);
-    }
+    if (this.forceClosed && history.state && history.state.menuDepth) history.replaceState(this.clearedState, "");
     if (history.state && history.state.menuDepth) {
-      if (menu.depth !== (history.state && history.state.menuDepth)) {
-        menu.depth = history.state.menuDepth;
-      }
+      if (menu.depth !== (history.state && history.state.menuDepth)) menu.depth = history.state.menuDepth;
       await menu.open();
     }
-    else {
-      //menu._depth = (history.state && history.state.menuDepth) || 1;
-      await menu.close();
-      //menu.depth = 1;
-    }
+    else await menu.close();
   },
   get clearedState () {
     const state = Object.apply({}, history.state);
@@ -132,16 +94,15 @@ var menu = {
     if (value === this.depth) return;
     if (value < 1) handle(new RangeError(`Menu depth cannot be set to ${value}, must be 1 or greater`));
     this._depth = value;
-    setTimeout(() => {
-      const uls = Array.from(document.querySelectorAll("nav" + " ul".repeat(this.depth + 1) + ".sub-open"));
-      if (this.depth === 2 && settings.classList.contains("sub-open")) uls.push(settings);
-      for (let ul of uls) {
-        ul.classList.remove("sub-open");
-      }
-      //console.log("invisabled");
-    }, value < prev ? 500 : 0);
-    //console.log(value, prev);
+    if (value < prev) setTimeout(this._invisablify, 500);
+    else this._invisablify();
     menu.listContainer.style.right = (menu.depth - 1) * menu.listContainer.clientWidth + "px";
+  },
+  _invisablify () {
+    if (new Error().stack.includes("loadPage")) return;
+    const uls = Array.from(document.querySelectorAll("#lists > ul" + " > li > ul".repeat(this.depth - 1) + ".sub-open"));
+    if (this.depth === 2 && settings.classList.contains("sub-open")) uls.push(settings);
+    for (let ul of uls) ul.classList.remove("sub-open");
   },
   get isOpen () {
     return this.element.classList.contains("open");
@@ -155,7 +116,6 @@ menu.initSubMenus();
 
 openMenuContainer.addEventListener("click", event => {
   event.stopPropagation();
-  //menu.pushDepth();
   menu.open();
 });
 document.getElementById("close-menu").parentNode.addEventListener("click", history.back.bind(history));
