@@ -68,6 +68,16 @@
         </ul>
         <ul>
           <li id="enter-settings" class="menu">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <path id="tooth" d="M 40 0 h 20 l 3.75 15 h -27.5 z" fill="gray" />
+              <use href="#tooth" transform="rotate(60 50 50)" />
+              <use href="#tooth" transform="rotate(120 50 50)" />
+              <use href="#tooth" transform="rotate(180 50 50)" />
+              <use href="#tooth" transform="rotate(240 50 50)" />
+              <use href="#tooth" transform="rotate(300 50 50)" />
+              <circle cx="50" cy="50" r="29" stroke="gray" stroke-width="20" fill="none" />
+              <circle cx="50" cy="50" r="10" fill="gray" />
+            </svg>
             Settings
             <div id="settings">
               This is the settings menu
@@ -101,7 +111,35 @@
     <div class="loading-dot"></div>
   </div>
   <footer>
-    This site uses cookies. <input type="button" value="I Accept Cookies!" class="highlight"> <input type="button" value="No cookies for me.">
+    <svg viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="chip" viewBox="0 0 100 100" width="5" height="5">
+        <rect x="0" y="0" width="100" height="100" fill="#291500" />
+      </symbol>
+      <symbol id="cookie" viewBox="0 0 100 100" width="55" height="55">
+        <circle cx="50" cy="50" r="50" fill="#7a5000" stroke="black" />
+        <use href="#chip" x="30" y="10" transform="rotate(30)" />
+        <use href="#chip" x="48" y="21" transform="rotate(-10)" />
+        <use href="#chip" x="40" y="-30" transform="rotate(70)" />
+        <use href="#chip" x="90" y="-30" transform="rotate(45)" />
+        <use href="#chip" x="75" y="10" transform="rotate(10)" />
+        <use href="#chip" x="50" y="-50" transform="rotate(80)" />
+        <use href="#chip" x="65" y="-15" transform="rotate(65)" />
+        <use href="#chip" x="20" y="45" transform="rotate(5)" />
+        <use href="#chip" x="75" y="-20" transform="rotate(85)" />
+        <use href="#chip" x="30" y="10" transform="rotate(30)" />
+        <use href="#chip" x="75" y="50" transform="rotate(10)" />
+        <use href="#chip" x="90" y="35" transform="rotate(40)" />
+        <use href="#chip" x="100" y="40" transform="rotate(25)" />
+      </symbol>
+      <use href="#cookie" x="0" y="28.75"/><!-- transform="translateY(-25%) rotate(30 0 45)"-->
+      <use href="#cookie" x="45" y="40"/>
+      <use href="#cookie" x="22.5" y="0"/><!--transform="translateX(-50%) rotate(-30 0 50)"-->
+    </svg>
+    <div>
+      This site uses cookies.
+      <input type="button" value="I Accept Cookies!" class="highlight"> 
+      <input type="button" value="No cookies for me.">
+    </div>
   </footer>
 </body>
 </html>

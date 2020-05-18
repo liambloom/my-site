@@ -3,3 +3,14 @@
   bottom: 0;
   top: unset;
 }
+#enter-settings {
+  padding-left: calc((2 * var(--header-height) - 1em) / 2 + 10px);
+  width: calc(100% + 1em - 1.5 * var(--header-height) - 10px) !important;
+}
+#enter-settings svg {
+  height: calc(var(--header-height) * 0.5);
+  position: absolute;
+  left: calc((var(--header-height) - 1em) / 2); /* normal left padding */
+  top: 50%;
+  transform: translateY(-50%);
+}

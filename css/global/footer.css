@@ -11,4 +11,38 @@ footer {
   transition-duration: 1.25s;
   transition-timing-function: ease-in-out;
   z-index: 1;
+  max-height: var(--header-height);
+}
+footer div {
+  display: inline;
+  background-color: var(--background);
+  position: relative;
+  padding: 0.25em;
+  border-radius: 5px;
+}
+footer svg {
+  position: absolute;
+  bottom: 0;
+  left: min(20%, 300px);
+  height: calc(var(--header-height) * 2.5 * 0.95);
+  width: calc(var(--header-height) * 2.5);
+  transform: translateX(-50%);
+}
+#cookies img {
+  position: absolute;
+  width: 55%;
+}
+#cookies img:first-of-type {
+  bottom: 0;
+  left: 0;
+  transform: translateY(-25%) rotate(30deg);
+}
+#cookies img:nth-of-type(2) {
+  bottom: 0;
+  right: 0;
+}
+#cookies img:last-of-type {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(-30deg);
 }

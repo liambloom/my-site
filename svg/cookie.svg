@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="chip" viewBox="0 0 100 100" width="5" height="5">
+    <rect x="0" y="0" width="100" height="100" fill="#291500"/>
+  </symbol>
+  <symbol id="cookie" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="50" fill="#7a5000" stroke="black"/>
+    <use href="#chip" x="30" y="10" transform="rotate(30)"/>
+    <use href="#chip" x="48" y="21" transform="rotate(-10)"/>
+    <use href="#chip" x="40" y="-30" transform="rotate(70)"/>
+    <use href="#chip" x="90" y="-30" transform="rotate(45)"/>
+    <use href="#chip" x="75" y="10" transform="rotate(10)"/>
+    <use href="#chip" x="50" y="-50" transform="rotate(80)"/>
+    <use href="#chip" x="65" y="-15" transform="rotate(65)"/>
+    <use href="#chip" x="20" y="45" transform="rotate(5)"/>
+    <use href="#chip" x="75" y="-20" transform="rotate(85)"/>
+    <use href="#chip" x="30" y="10" transform="rotate(30)"/>
+    <use href="#chip" x="75" y="50" transform="rotate(10)"/>
+    <use href="#chip" x="90" y="35" transform="rotate(40)"/>
+    <use href="#chip" x="100" y="40" transform="rotate(25)"/>
+  </symbol>
+  <use href="#cookie"/>
+</svg>
