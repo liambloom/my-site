@@ -16,6 +16,10 @@ function transitionLinks () {
     }
   }
 }
+var awaitPageLoad = new Promise(resolve => {
+  if (document.readyState === "complete") resolve();
+  else window.addEventListener("load", resolve);
+});
 function loaded () {
   Modal.loading.end();
   window.pageLoadState = "complete";
@@ -65,25 +69,27 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
           resolve();
         })
       ]))
-      .then(transitionLinks)
-      .catch(err => {
-        if (document.readyState === "complete") handle(err);
-        else document.addEventListener("load", () => handle(err));
-      }),
+      .then(awaitPageLoad)
+      .then(() => Promise.all([
+        transitionLinks, 
+        awaitPageLoad.then(initCustomInputs)
+      ]))
+      .catch(err => awaitPageLoad.then(() => handle(err))),
     () => {
       for (let e of Array.from(document.querySelectorAll("[data-for-page]"))) {
         if (e.getAttribute("data-for-page") !== location.pathname) e.remove();
       }
     }
   ])
+    .then(awaitPageLoad)
     .then(() => {
       currentPage = location.href;
-      if (document.readyState === "complete") loaded();
-      else window.addEventListener("load", loaded);
+      loaded();
       history.replaceState(menu.clearedState, "");
       menu.updateMenuState(); // Run asynchronously, NOT awaited
       return true;
-    });  
+    })
+    .catch(err => awaitPageLoad.then(() => handle(err)));  
 }
 window.addEventListener("popstate", loadPage);
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadPage);

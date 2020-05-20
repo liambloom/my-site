@@ -1,8 +1,3 @@
-#settings {
-  height: calc(100vh - var(--header-height));
-  bottom: 0;
-  top: unset;
-}
 #enter-settings {
   padding-left: calc((2 * var(--header-height) - 1em) / 2 + 10px);
   width: calc(100% + 1em - 1.5 * var(--header-height) - 10px) !important;
@@ -13,4 +8,12 @@
   left: calc((var(--header-height) - 1em) / 2); /* normal left padding */
   top: 50%;
   transform: translateY(-50%);
+}
+#settings {
+  height: calc(100vh - var(--header-height));
+  bottom: 0;
+  top: unset;
+}
+#settings-content {
+  margin: 10px;
 }
