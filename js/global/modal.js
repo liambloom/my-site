@@ -95,7 +95,7 @@ function alert (text) {
       resolve(undefined);
     });
   });
-};
+}
 function confirm (text) {
   const modal = new Modal({
     text: text.replace(/<(?!br>)/g, "&lt;"),
@@ -114,7 +114,7 @@ function confirm (text) {
       resolve(false);
     });
   });
-};
+}
 function prompt (text) {
   const modal = new Modal({
     text: `${text.replace(/<(?!br>)/g, "&lt;")}<br><input type="text">`,
@@ -135,4 +135,4 @@ function prompt (text) {
       resolve(null);
     });
   });
-};
+}
