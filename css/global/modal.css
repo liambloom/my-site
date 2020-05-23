@@ -55,6 +55,87 @@
   transition: background-color 1.25s ease-in-out;
   text-align: right;
 }
+#color-picker {
+  width: 500px;
+  height: 400px;
+  max-height: 100vh;
+  padding: 10px;
+  gap: 10px;
+  grid-template-rows: 304px 1fr;
+  grid-template-columns: 304px 24px;
+  grid-template-areas: 
+    "hue-saturation lightness"
+    "buttons buttons";
+}
+#color-picker.open {
+  display: grid;
+}
+#hue-saturation {
+  grid-area: hue-saturation;
+  width: 300px;
+  height: 300px;
+  margin: 10px;
+  position: relative;
+  border: 2px solid var(--darker);
+  background-image: linear-gradient(to bottom, transparent, gray), 
+    linear-gradient(to right, red, #f80, yellow, #8f0, #0f0, #0f8, cyan, #08f, blue, #80f, magenta, #f08, red); /* unfortunately doesn't blend colors correctly (https://www.youtube.com/watch?v=LKnqECcg6Gw) */
+}
+#hue-saturation div {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--background);
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: move;
+}
+#lightness {
+  /*-webkit-appearance: none;*/
+  appearance: none;
+  grid-area: lightness;
+  padding: 0px;
+  height: 20px;
+  width: 300px;
+  background: transparent;
+  border: none;
+  outline: none;
+  margin: 0px;    
+  transform: rotate(270deg);
+  position: relative;
+  top: 140px;
+  right: 140px;
+}
+#lightness-background {
+  height: 300px;
+  width: 20px;
+  margin: 10px;
+  background-image: linear-gradient(white, red, black);
+  border: 2px solid var(--darker);
+}
+#lightness::-webkit-slider-thumb {
+  /*-webkit-appearance: none;*/
+  appearance: none;
+  cursor: ns-resize;
+  height: 20px;
+  width: 0px;
+  background-color: transparent;
+  border-radius: 0px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--darker) transparent;
+}
+#lightness::-moz-range-thumb {
+  cursor: ns-resize;
+  height: calc(100% - 9px);
+  width: 0px;
+  background-color: transparent;
+  border-radius: 0px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--darker) transparent;
+}
 @keyframes open-modal {
   from {
     top: -5px;

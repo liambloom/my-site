@@ -17,18 +17,17 @@
   <link rel="stylesheet" href="/css/global/header.css">
   <link rel="stylesheet" href="/css/global/footer.css">
   <link rel="stylesheet" href="/css/global/modal.css">
-  <link rel="stylesheet" href="/css/global/color.css">
   <link rel="stylesheet" href="/css/global/settings.css">
 
   <!--<link rel="preload" href="<%#- "/pages" + url.pathname + url.search %>" as="fetch">-->
   
   <script src="/js/global/page-loader.js" type="application/javascript" async></script>
   <script src="/js/global/globals.js" type="application/javascript" defer></script>
+  <script src="/js/global/Color.js" type="application/javascript" defer></script>
   <script src="/js/global/theme.js" type="application/javascript" defer></script>
   <script src="/js/global/inputs.js" type="application/javascript" defer></script>
   <script src="/js/global/modal.js" type="application/javascript" defer></script>
   <script src="/js/global/header.js" type="application/javascript" defer></script>
-  <script src="/js/global/Color.js" type="application/javascript" defer></script>
   <script src="/js/global/settings.js" type="application/javascript" defer></script>
 
   <%# if (hasImports) { %>
@@ -84,7 +83,7 @@
             Settings
             <div id="settings">
               <div id="settings-content">
-                <div class="switch"></div>
+                <input type="color">
               </div>
             </div>
           </li>
@@ -118,6 +117,12 @@
   <div id="color-picker" class="modal">
     <div id="hue-saturation">
       <div></div>
+    </div>
+    <div id="lightness-background">
+      <input type="range" step="1" id="lightness">
+    </div>
+    <div class="bottom">
+      <input type="button" value="OK" class="highlight" data-close><input type="button" value="Cancel" data-cancel>
     </div>
   </div>
   <footer>

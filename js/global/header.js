@@ -78,7 +78,7 @@ var menu = {
     return state;
   },
   _closeOnClickOut (event) { 
-    if (!menu.element.contains(event.target)) menu.close();
+    if (!Array.from(document.getElementsByClassName("modal")).concat(menu.element, Modal.overlay).some(e => e.contains(event.target))) menu.close();
   },
   element: document.getElementsByTagName("nav")[0],
   get listElement () {

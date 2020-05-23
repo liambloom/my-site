@@ -5,7 +5,7 @@ const domParser = new DOMParser();
 var parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
 async function handle (err) {
   console.error(err);
-  if (await confirm("An error has occurred. The page will now reload<br><br>" + err)) location.reload();
+  if (await confirm("An error has occurred. The page will now reload<br><br>" + err, true)) location.reload();
 }
 function remakeElement (el) {
   const newEl = document.createElement(el.tagName);
@@ -16,7 +16,7 @@ var type = {
   check (value, ...types) {
     let validStrings;
     const findStrings = e => typeof e === "string" || e instanceof String;
-    if (types.findIndex(findStrings) !== -1) {
+    if (types.some(findStrings)) {
       validStrings = types.filter(findStrings).map(e => e.valueOf());
       types = types.filter(neg(findStrings));
       if (!types.includes(String)) types.push(String);
@@ -45,6 +45,10 @@ var type = {
       if (value instanceof type || value.constructor === type) return;
     }
     throw new TypeError(`Expected ${typeString}; received type ${value.constructor.name}`);
+  },
+  checkRange (value, min = -Infinity, max = Infinity) {
+    for (let arg of [value, min, max]) this.check(arg, Number);
+    if (value < min || value > max) throw new RangeError(`Expected value between ${min} and ${max}; received ${value}`);
   },
   getTypeString (types) {
     return this.toHList(types.map(this.typename));
