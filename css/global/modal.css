@@ -45,6 +45,7 @@
 }
 .modal:not(.no-body) .content {
   margin: 10px;
+  margin-bottom: 48px;
   text-align: center;
 }
 .modal:not(.no-body) .bottom {
@@ -57,24 +58,22 @@
 }
 #color-picker {
   width: 500px;
-  height: 400px;
   max-height: 100vh;
-  padding: 10px;
-  gap: 10px;
-  grid-template-rows: 304px 1fr;
-  grid-template-columns: 304px 24px;
-  grid-template-areas: 
-    "hue-saturation lightness"
-    "buttons buttons";
 }
-#color-picker.open {
+#color-picker .content {
   display: grid;
+  height: 304px;
+  gap: 10px;
+  grid-template-rows: 30% 70%;
+  grid-template-columns: 304px 24px 1fr;
+  grid-template-areas: 
+    "hue-saturation lightness before-after"
+    "hue-saturation lightness textboxes";
 }
 #hue-saturation {
   grid-area: hue-saturation;
   width: 300px;
   height: 300px;
-  margin: 10px;
   position: relative;
   border: 2px solid var(--darker);
   background-image: linear-gradient(to bottom, transparent, gray), 
@@ -101,7 +100,7 @@
   background: transparent;
   border: none;
   outline: none;
-  margin: 0px;    
+  margin: 0px;  
   transform: rotate(270deg);
   position: relative;
   top: 140px;
@@ -110,7 +109,6 @@
 #lightness-background {
   height: 300px;
   width: 20px;
-  margin: 10px;
   background-image: linear-gradient(white, red, black);
   border: 2px solid var(--darker);
 }

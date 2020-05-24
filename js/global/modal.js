@@ -110,17 +110,15 @@ Modal.color = {
     try {
       if (Modal.openModal) throw new Error("Cannot ask for two colors at once");
       //if (!/^\s*hsl\(\s*(?:360|3[0-5]\d|[0-2]?\d{1,2})\s*(?:,\s*(?:100|\d{1,2})\s*){2}\)\s*$/.test(current)) throw new Error("The current color must be a valid hsl color function");
+      Modal.color.open();
+      current = new Color(current);
+      this.value = current;
+      //const { h, s, l } = current;
+      //console.log(h, s, l);
+      this.modal.getElementsByClassName("before")[0].style.backgroundColor = current;
       return new Promise(resolve => {
-        Modal.color.open();
-        current = new Color(current);
-        const { h, s, l } = current;
-        console.log(h, s, l);
-        hsKnob.style.left = h / 360 * hsContainer.clientWidth + "px";
-        hsKnob.style.top = s / 100 * hsContainer.clientHeight + "px";
-        lightness.value = l;
-        this.updateLightness();
-        Modal.color.modal.addEventListener("preclose", event => {
-          resolve(event.accepted ? Modal.color.value : current);
+        Modal.color.modal.addEventListener("preclose", ({accepted}) => {
+          resolve(accepted ? Modal.color.value : current);
         });
       });
     }
@@ -131,16 +129,42 @@ Modal.color = {
   open () {
     Modal.open(this.modal);
   },
-  updateLightness () {
-    lightness.parentNode.style.backgroundImage = `linear-gradient(white, ${Color.hsl(this.value.h, 100, 50)}, black)`;
+  get isOpen () {
+    return Modal.openModal === this.modal;
+  },
+  get calculatedValue () {
+    /*console.log(this.isOpen);
+    console.log(parseFloat(hsKnob.style.left), 100 - 100 * parseFloat(hsKnob.style.top) / hsContainer.clientHeight).toFixed(1), lightness.value);*/
+    try {
+      return this.isOpen ? Color.hsl(+(360 * parseFloat(hsKnob.style.left) / hsContainer.clientWidth).toFixed(1), +(100 - 100 * parseFloat(hsKnob.style.top) / hsContainer.clientHeight).toFixed(1), +lightness.value) : null;
+    }
+    catch (err) {
+      console.warn(err);
+      return null;
+    }
   },
   get value () {
-    return new Color(`hsl(${+(360 * parseFloat(hsKnob.style.left) / hsContainer.clientWidth).toFixed(1)}, ${+(100 - 100 * parseFloat(hsKnob.style.top) / hsContainer.clientHeight).toFixed(1)}, ${lightness.value})`);
+    return this._value;
+  },
+  set value (color) {
+    color = new Color(color);
+    //console.log(color.hsl);
+    this._value = color;
+    this._value.onchange = function () {
+      const cv = Modal.color.calculatedValue;
+      console.log(this.hsl, cv && cv.hsl);
+      if (cv && Color.hsl(this.h, cv.s, cv.l).h !== cv.h) hsKnob.style.left = this.h / 360 * hsContainer.clientWidth + "px";
+      if (cv && Color.hsl(cv.h, this.s, cv.l).s !== cv.s) hsKnob.style.top = (1 - this.s / 100) * hsContainer.clientHeight + "px";
+      if (cv && Color.hsl(cv.h, cv.s, this.l).l !== cv.l) lightness.value = this.l;
+      lightness.parentNode.style.backgroundImage = `linear-gradient(white, ${Color.hsl(this/*.value*/.h, 100, 50)}, black)`;
+      Modal.color.modal.getElementsByClassName("after")[0].style.backgroundColor = this;
+    };
+    this._value._changed();
   },
   modal: document.getElementById("color-picker")
 };
 
-for (let input of Array.from(document.querySelectorAll('input[type="color"]:not([data-native])'))) {
+/*for (let input of Array.from(document.querySelectorAll('input[type="color"]:not([data-native])'))) {
   input.addEventListener("click", async event => {
     event.preventDefault();
     const color = await Modal.color.getColor(new Color(input.value));
@@ -148,20 +172,27 @@ for (let input of Array.from(document.querySelectorAll('input[type="color"]:not(
     input.value = color.hex;
     input.dispatchEvent(new Event("change"));
   });
-}
+}*/
 const hsContainer = document.getElementById("hue-saturation");
 const hsKnob = hsContainer.getElementsByTagName("div")[0];
 const lightness = document.getElementById("lightness");
 const hsMousemove = event => {
   if (event instanceof MouseEvent && event.buttons !== 1) return;
-  hsKnob.style.left = Math.max(0, Math.min(300, (event.clientX || event.touches[0].clientX) - hsContainer.getBoundingClientRect().x)) + "px";
-  hsKnob.style.top = Math.max(0, Math.min(300, (event.clientY || event.touches[0].clientY) - hsContainer.getBoundingClientRect().y)) + "px";
-  Modal.color.updateLightness();
+  const x = Math.max(0, Math.min(300, (event.clientX || event.touches[0].clientX) - hsContainer.getBoundingClientRect().x)) + "px";
+  const y = Math.max(0, Math.min(300, (event.clientY || event.touches[0].clientY) - hsContainer.getBoundingClientRect().y)) + "px";
+  hsKnob.style.left = x;
+  hsKnob.style.top = y;
+  Modal.color.value = Modal.color.calculatedValue;
+  /*hsKnob.style.left = x;
+  hsKnob.style.top = y;*/
 };
 hsContainer.addEventListener("mousedown", hsMousemove);
 hsContainer.addEventListener("mousemove", hsMousemove);
 hsContainer.addEventListener("touchstart", hsMousemove);
 hsContainer.addEventListener("touchmove", hsMousemove);
+lightness.addEventListener("input", () => {
+  Modal.color.value.l = parseFloat(lightness.value);
+});
 
 Color.modal = Modal.color;
 window.Modal = Modal;
@@ -183,8 +214,8 @@ function confirm (text, force = false) {
   });
   Modal[force ? "forceOpen" : "open"](modal);
   return new Promise(resolve => {
-    modal.addEventListener("close", event => {
-      resolve(!!event.accepted);
+    modal.addEventListener("close", ({accepted}) => {
+      resolve(!!accepted);
     });
   });
 }
@@ -195,8 +226,8 @@ function prompt (text, force = false) {
   });
   Modal[force ? "forceOpen" : "open"](modal);
   return new Promise(resolve => {
-    modal.addEventListener("close", event => {
-      resolve(event.accepted ? modal.querySelector('input[type="text"]').value : null);
+    modal.addEventListener("close", ({accepted}) => {
+      resolve(accepted ? modal.querySelector('input[type="text"]').value : null);
     });
   });
 }

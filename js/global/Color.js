@@ -11,7 +11,10 @@ class Color {
     else if (arg instanceof Color) return Color.rgba(...Object.values({r, g, b, a} = arg));
     else throw new Error("Expected format rgb, rgba, hsl, hsla, or 3, 4, 6, or 8 digit hex code");
   }
-  toString() {
+  _changed () {
+    if (typeof this.onchange === "function") this.onchange.call(this);
+  }
+  toString () {
     return this.hex;
   }
   get r () { // red
@@ -20,6 +23,7 @@ class Color {
   set r (value) {
     type.checkRange(value, 0, 255);
     this._r = value;
+    this._changed();
   }
   get g () { // green
     return this._g;
@@ -27,6 +31,7 @@ class Color {
   set g (value) {
     type.checkRange(value, 0, 255);
     this._r = value;
+    this._changed();
   }
   get b () { // blue
     return this._b;
@@ -34,6 +39,7 @@ class Color {
   set b (value) {
     type.checkRange(value, 0, 255);
     this._r = value;
+    this._changed();
   }
   get a () { // alpha
     return this._a;
@@ -41,24 +47,27 @@ class Color {
   set a (value) {
     type.checkRange(value, 0, 1);
     this._r = value;
+    this._changed();
   }
   get h () { // hue
     return (((Math.round((this._max === this.r ? (this.g - this.b) / this._delta % 6 : this._max === this.g ? (this.b - this.r) / this._delta + 2 : (this.r - this.g) / this._delta + 4) * 60) || 0) + 360) % 360);
   }
   set h (value) {
-    const n = new Color(value, this.s, this.l);
+    const n = Color.hsl(value, this.s, this.l);
     this.r = n.r;
     this.g = n.g;
     this.b = n.b;
+    this._changed();
   }
   get s () { // saturation
-    return this._lRaw === 1 ? 0 : +(this._delta / 2.55 / (1 - Math.abs(2 * this._lRaw - 1))).toFixed(1);
+    return !(this._lRaw % 1) ? 0 : +(this._delta / 2.55 / (1 - Math.abs(2 * this._lRaw - 1))).toFixed(1);
   }
   set s (value) {
-    const n = new Color(this.h, value, this.l);
+    const n = Color.hsl(this.h, value, this.l);
     this.r = n.r;
     this.g = n.g;
     this.b = n.b;
+    this._changed();
   }
   get _lRaw () {
     return (this._max + this._min) / 510;
@@ -66,11 +75,13 @@ class Color {
   get l () { // lightness
     return +(100 * this._lRaw).toFixed(1);
   }
-  set h (value) {
-    const n = new Color(this.h, this.s, value);
-    this.r = n.r;
-    this.g = n.g;
-    this.b = n.b;
+  set l (value) {
+    const n = Color.hsl(this.h, this.s, value);
+    console.log(n);
+    this._r = n.r;
+    this._g = n.g;
+    this._b = n.b;
+    this._changed();
   }
   get _min () {
     return Math.min(this.r, this.g, this.b);
@@ -119,6 +130,7 @@ class Color {
     return this.hsla(h, s, l, 1);
   }
   static hsla (h, s, l, a) {
+    //console.log(typeof h, typeof s, l, a);
     type.checkRange(h, 0, 360);
     type.checkRange(s, 0, 100);
     type.checkRange(l, 0, 100);

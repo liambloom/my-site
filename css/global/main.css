@@ -18,3 +18,21 @@ a.blend {
 #prev-page {
   display: none;
 }
+.before-after {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "before after";
+}
+.before-after div {
+  width: 100%;
+  height: 100%;
+}
+.before-after .before {
+  grid-area: before;
+}
+.before-after .after {
+  grid-area: after;
+}
