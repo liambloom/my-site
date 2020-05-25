@@ -112,7 +112,9 @@ Modal.color = {
       //if (!/^\s*hsl\(\s*(?:360|3[0-5]\d|[0-2]?\d{1,2})\s*(?:,\s*(?:100|\d{1,2})\s*){2}\)\s*$/.test(current)) throw new Error("The current color must be a valid hsl color function");
       Modal.color.open();
       current = new Color(current);
-      this.value = current;
+      this.setHSL(current);
+      this.setRGB(current);
+      //this.value = current;
       //const { h, s, l } = current;
       //console.log(h, s, l);
       this.modal.getElementsByClassName("before")[0].style.backgroundColor = current;
@@ -132,34 +134,47 @@ Modal.color = {
   get isOpen () {
     return Modal.openModal === this.modal;
   },
-  get calculatedValue () {
+  get calcH () {
+    return +(360 * parseFloat(hsKnob.style.left) / hsContainer.clientWidth).toFixed(1);
+  },
+  get calcS () {
+    return +(100 - 100 * parseFloat(hsKnob.style.top) / hsContainer.clientHeight).toFixed(1);
+  },
+  get calcL () {
+    return +lightness.value;
+  },
+  get value () {
     /*console.log(this.isOpen);
     console.log(parseFloat(hsKnob.style.left), 100 - 100 * parseFloat(hsKnob.style.top) / hsContainer.clientHeight).toFixed(1), lightness.value);*/
     try {
-      return this.isOpen ? Color.hsl(+(360 * parseFloat(hsKnob.style.left) / hsContainer.clientWidth).toFixed(1), +(100 - 100 * parseFloat(hsKnob.style.top) / hsContainer.clientHeight).toFixed(1), +lightness.value) : null;
+      return this.isOpen ? Color.rgb(+redTB.value, +greenTB.value, +blueTB.value) : null;
     }
     catch (err) {
       console.warn(err);
       return null;
     }
   },
-  get value () {
-    return this._value;
+  setHSL (h, s, l) {
+    if (h instanceof Color) ({h, s, l} = h);
+    h = Math.round(h);
+    s = +s.toFixed(1);
+    l = +l.toFixed(1);
+    hsKnob.style.left = h / 360 * hsContainer.clientWidth + "px";
+    hsKnob.style.top = (1 - s / 100) * hsContainer.clientHeight + "px";
+    lightness.value = l;
+    lightness.parentNode.style.backgroundImage = `linear-gradient(white, ${Color.hsl(h, 100, 50)}, black)`;
+    hueTB.value = h;
+    saturationTB.value = s;
+    lightnessTB.value = l;
   },
-  set value (color) {
-    color = new Color(color);
-    //console.log(color.hsl);
-    this._value = color;
-    this._value.onchange = function () {
-      const cv = Modal.color.calculatedValue;
-      console.log(this.hsl, cv && cv.hsl);
-      if (cv && Color.hsl(this.h, cv.s, cv.l).h !== cv.h) hsKnob.style.left = this.h / 360 * hsContainer.clientWidth + "px";
-      if (cv && Color.hsl(cv.h, this.s, cv.l).s !== cv.s) hsKnob.style.top = (1 - this.s / 100) * hsContainer.clientHeight + "px";
-      if (cv && Color.hsl(cv.h, cv.s, this.l).l !== cv.l) lightness.value = this.l;
-      lightness.parentNode.style.backgroundImage = `linear-gradient(white, ${Color.hsl(this/*.value*/.h, 100, 50)}, black)`;
-      Modal.color.modal.getElementsByClassName("after")[0].style.backgroundColor = this;
-    };
-    this._value._changed();
+  setRGB (r, g, b) {
+    if (r instanceof Color) ({ r, g, b } = r);
+    redTB.value = r = Math.round(r);
+    greenTB.value = g = Math.round(g);
+    blueTB.value = b = Math.round(b);
+    const c = Color.rgb(r, g, b);
+    hexTB.value = c.hex.slice(1);
+    Modal.color.modal.getElementsByClassName("after")[0].style.backgroundColor = c;
   },
   modal: document.getElementById("color-picker")
 };
@@ -176,13 +191,25 @@ Modal.color = {
 const hsContainer = document.getElementById("hue-saturation");
 const hsKnob = hsContainer.getElementsByTagName("div")[0];
 const lightness = document.getElementById("lightness");
+const hueTB = document.getElementById("h-tb");
+const saturationTB = document.getElementById("s-tb");
+const lightnessTB = document.getElementById("l-tb");
+const redTB = document.getElementById("r-tb");
+const greenTB = document.getElementById("g-tb");
+const blueTB = document.getElementById("b-tb");
+const hexTB = document.getElementById("hex-tb");
+const rgbTextboxes = [redTB, greenTB, blueTB];
+const hslTextboxes = [hueTB, saturationTB, lightnessTB];
+const regex100 = /^1?[0-9]{1,2}(?:\.[0-9])?$/;
+const regex255 = /^(?:2(?:5[0-5]|[0-4][0-9])|[0-1]?[0-9]{1,2})$/;
+const regex360 = /^(?:3(?:60|[0-5][0-9])|[0-2]?[0-9]{1,2})$/;
 const hsMousemove = event => {
   if (event instanceof MouseEvent && event.buttons !== 1) return;
-  const x = Math.max(0, Math.min(300, (event.clientX || event.touches[0].clientX) - hsContainer.getBoundingClientRect().x)) + "px";
-  const y = Math.max(0, Math.min(300, (event.clientY || event.touches[0].clientY) - hsContainer.getBoundingClientRect().y)) + "px";
-  hsKnob.style.left = x;
-  hsKnob.style.top = y;
-  Modal.color.value = Modal.color.calculatedValue;
+  const h = Math.max(0, Math.min(300, (event.clientX || event.touches[0].clientX) - hsContainer.getBoundingClientRect().x)) / hsContainer.clientWidth * 360;
+  const s = (Math.max(0, Math.min(300, (event.clientY || event.touches[0].clientY) - hsContainer.getBoundingClientRect().y)) / hsContainer.clientHeight - 1) * -100;
+  const l = +lightness.value;
+  Modal.color.setHSL(h, s, l);
+  Modal.color.setRGB(Color.hsl(h, s, l));
   /*hsKnob.style.left = x;
   hsKnob.style.top = y;*/
 };
@@ -191,7 +218,69 @@ hsContainer.addEventListener("mousemove", hsMousemove);
 hsContainer.addEventListener("touchstart", hsMousemove);
 hsContainer.addEventListener("touchmove", hsMousemove);
 lightness.addEventListener("input", () => {
-  Modal.color.value.l = parseFloat(lightness.value);
+  const hsl = [Modal.color.calcH, Modal.color.calcS, Modal.color.calcL];
+  Modal.color.setHSL(...hsl);
+  Modal.color.setRGB(Color.hsl(...hsl));
+});
+for (let tb of rgbTextboxes.concat(hslTextboxes, [hexTB])) {
+  tb.addEventListener("focus", () => {
+    tb.prevValue = tb.value;
+  });
+}
+for (let tb of rgbTextboxes) {
+  tb.prevValue = 0;
+  tb.addEventListener("input", () => {
+    if (!tb.value.length) return;
+    if (!regex255.test(tb.value)) {
+      tb.value = tb.prevValue;
+      return;
+    }
+    tb.prevValue = tb.value;
+    const rgb = rgbTextboxes.map(e => parseFloat(e.value));
+    Modal.color.setRGB(...rgb);
+    Modal.color.setHSL(Color.rgb(...rgb));
+  });
+  tb.addEventListener("blur", () => {
+    if (!regex255.test(tb.value)) tb.value = tb.prevValue;
+  });
+}
+for (let tb of hslTextboxes) {
+  tb.addEventListener("input", () => {
+    if (!tb.value) return;
+    if (tb.value.includes(".") && tb.value.match(/\./g).length === 1) {
+      if (tb.value.match(/^\.|\.$/)) return;
+    }
+    if (!(tb === hueTB ? regex360 : regex100).test(tb.value)) {
+      tb.value = tb.prevValue;
+      return;
+    }
+    tb.prevValue = tb.value;
+    const hsl = hslTextboxes.map(e => parseFloat(e.value));
+    Modal.color.setHSL(...hsl);
+    Modal.color.setRGB(Color.hsl(...hsl));
+  });
+  tb.addEventListener("blur", () => {
+    if (!(tb === hueTB ? regex360 : regex100).test(tb.value)) tb.value = tb.prevValue;
+    if (tb.value.includes(".") && tb.value.match(/\./g).length === 1) {
+      if (tb.value.indexOf(".") === 0) tb.value = "0" + tb.value;
+      else if (tb.value.indexOf(".") + 1 === tb.value.length) tb.value += "0";
+    }
+  });
+}
+hexTB.addEventListener("input", () => {
+  if (!/^[0-9a-f]{0,6}$/i.test(hexTB.value)) hexTB.value = hexTB.prevValue;
+  hexTB.prevValue = hexTB.value;
+  if (hexTB.value.length !== 6) return;
+  hexTB.prevValid = hexTB.value;
+  const c = Color.hex("#" + hexTB.value);
+  Modal.color.setRGB(c);
+  Modal.color.setHSL(c);
+});
+hexTB.addEventListener("focus", () => {
+  hexTB.prevValid = hexTB.value;
+});
+hexTB.addEventListener("blur", () => {
+  if (hexTB.value.length !== 6) hexTB.value = hexTB.prevValid;
 });
 
 Color.modal = Modal.color;

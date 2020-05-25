@@ -49,6 +49,7 @@ header {
 }*/
 .fill-txt {
   fill: var(--text);
+  transition: fill 1.25s ease-in-out;
 }
 nav {
   width: var(--nav-width);
@@ -91,15 +92,23 @@ nav ul {
 }
 #lists > ul:last-child li {
   border-bottom: none;
-  border-top: 1px solid var(--background-secondary);
+  border-top: 1px solid;
   width: calc(100% - var(--header-height) + 1em);
+  transition: border-color 1.25s ease-in-out
 }
 nav #back, nav li {
   padding: calc((var(--header-height) - 1em) / 2);
   list-style-type: none;
-  border-bottom: 1px solid var(--background-secondary);
+  border-bottom: 1px solid;
   height: 1em;
   cursor: pointer;
+  transition: border-color 1.25s ease-in-out;
+}
+[data-theme="light"] nav #back, [data-theme="light"] nav li, [data-theme="light"] #lists > ul:last-child li {
+  border-color: var(--background);
+}
+[data-theme="dark"] nav #back, [data-theme="dark"] nav li, [data-theme="dark"] #lists > ul:last-child li {
+  border-color: var(--background-secondary);
 }
 nav ul ul, #settings {
   transform: translateX(100%);

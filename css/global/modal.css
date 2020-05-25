@@ -27,6 +27,7 @@
   min-height: 150px;
   max-height: 10vh;
   overflow: hidden;
+  transition: background-color 1.25s ease-in-out;
 }
 .modal.open {
   display: initial;
@@ -64,7 +65,7 @@
   display: grid;
   height: 304px;
   gap: 10px;
-  grid-template-rows: 30% 70%;
+  grid-template-rows: 30% calc(70% - 10px);
   grid-template-columns: 304px 24px 1fr;
   grid-template-areas: 
     "hue-saturation lightness before-after"
@@ -78,6 +79,7 @@
   border: 2px solid var(--darker);
   background-image: linear-gradient(to bottom, transparent, gray), 
     linear-gradient(to right, red, #f80, yellow, #8f0, #0f0, #0f8, cyan, #08f, blue, #80f, magenta, #f08, red); /* unfortunately doesn't blend colors correctly (https://www.youtube.com/watch?v=LKnqECcg6Gw) */
+  transition: border-color 1.25s ease-in-out;
 }
 #hue-saturation div {
   width: 10px;
@@ -89,6 +91,7 @@
   top: 0;
   left: 0;
   cursor: move;
+  transition: border-color 1.25s ease-in-out;
 }
 #lightness {
   /*-webkit-appearance: none;*/
@@ -111,6 +114,7 @@
   width: 20px;
   background-image: linear-gradient(white, red, black);
   border: 2px solid var(--darker);
+  transition: border-color 1.25s ease-in-out;
 }
 #lightness::-webkit-slider-thumb {
   /*-webkit-appearance: none;*/
@@ -123,6 +127,7 @@
   border-width: 5px;
   border-style: solid;
   border-color: var(--darker) transparent;
+  transition: border-color 1.25s ease-in-out;
 }
 #lightness::-moz-range-thumb {
   cursor: ns-resize;
@@ -133,6 +138,84 @@
   border-width: 5px;
   border-style: solid;
   border-color: var(--darker) transparent;
+  transition: border-color 1.25s ease-in-out;
+}
+#textboxes {
+  grid-area: textboxes;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas: 
+    "r h"
+    "g s"
+    "b l"
+    "hex hex";
+  height: 100%;
+  width: 100%;
+  gap: 5px 10px;
+}
+#textboxes input {
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  outline: none !important;
+  border: none;
+  border-radius: 5px;
+  color: var(--text);
+  padding: 10px;
+  transition-property: color;
+  transition-duration: 1.25s;
+  transition-timing-function: ease-in-out;
+  font-size: 16px;
+  text-align: center;
+}
+#r-tb {
+  grid-area: r;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+#g-tb {
+  grid-area: g;
+  background-color: rgba(0, 255, 0, 0.1);
+}
+#b-tb {
+  grid-area: b;
+  background-color: rgba(0, 0, 255, 0.1);
+}
+#h-tb {
+  grid-area: h;
+  background-color: transparent;
+  background-image: linear-gradient(to right, rgba(255, 0, 0, 0.1), rgba(255, 255, 0, 0.1), rgba(0, 255, 0, 0.1), rgba(0, 255, 255, 0.1), rgba(0, 0, 255, 0.1), rgba(255, 0, 255, 0.1))
+}
+#s-tb {
+  grid-area: s;
+  background-color: rgba(128, 128, 128, 0.1);
+}
+#textboxes #l-tb {
+  grid-area: l;
+  transition-property: color, background-color;
+}
+[data-theme="light"] #l-tb {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme="dark"] #l-tb {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+#hex-tb-container {
+  grid-area: hex;
+  position: relative;
+}
+#hex-tb-container::before {
+  content: "#";
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+#textboxes #hex-tb {
+  background-color: var(--background-secondary);
+  transition-property: color, background-color;
+  padding-left: calc(15px + 1ch);
+  width: calc(100% - 25px - 1ch);
 }
 @keyframes open-modal {
   from {
