@@ -7,6 +7,7 @@ var menu = {
     if (await this._transition(true)) this.pushDepth();
   },
   async close() {
+    if (Modal.openModal) return;
     this.forceClosed = true;
     if (await this._transition(false)) {
       try {

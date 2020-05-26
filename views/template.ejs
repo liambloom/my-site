@@ -83,7 +83,20 @@
             Settings
             <div id="settings">
               <div id="settings-content">
-                <input type="color">
+                <section>
+                  <h2>Theme</h2>
+                  <div class="section-margin no-indent">
+                    <input type="radio" name="theme" id="light-theme-radio" value="light" <%= theme === "light" ? "checked" : "" %>>
+                    <label for="light-theme-radio">Light</label>
+                    <input type="radio" name="theme" id="dark-theme-radio" value="dark" <%= theme === "dark" ? "checked" : "" %>>
+                    <label for="dark-theme-radio">Dark</label>
+                    <input type="radio" name="theme" id="auto-theme-radio" value="auto" <%= !theme ? "checked" : "" %>>
+                    <label for="auto-theme-radio">Auto</label>
+                  </div>
+                  <div class="indent">
+                    Emphasis color: <input type="color" id="emphasis-input">
+                  </div>
+                </section>
               </div>
             </div>
           </li>

@@ -18,7 +18,7 @@ div.switch {
   width: 2em;
   height: 1em;
   border-radius: 0.5em;
-  transition: background-color 200ms ease-in-out; /* Theme changes 500ms ease-in-out */
+  transition: background-color 200ms ease-in-out; /* TODO: Implement theme transition */
 }
 [data-theme="light"] div.switch {
   background-color: var(--background); /* Doesn't look great */
@@ -42,4 +42,68 @@ div.switch::after {
 }
 div.switch.on::after {
   left: 1em;
+}
+label {
+  cursor: pointer;
+}
+input[type="radio"]:not([data-native]) {
+  display: none;
+}
+input[type="radio"]:not([data-native]):not(.custom) + label {
+  position: relative;
+  padding: 5px;
+  padding-left: 30px;
+  display: block;
+}
+input[type="radio"]:not([data-native]):not(.custom) + label::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(calc(-50% - 1.5px));
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--grayer-01);
+  border-radius: 50%;
+  transition: border-color 200ms ease-in-out; /* TODO: Implement theme transition */
+}
+input[type="radio"]:not([data-native]):not(.custom):checked + label::before {
+  border-color: var(--emphasis);
+}
+input[type="radio"]:not([data-native]):not(.custom) + label::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translate(-50%, calc(-50% - 1.5px));
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: var(--grayer-01);
+  transition-property: width, height, background-color;
+  transition-duration: 200ms; /* TODO: Implement theme transition */
+  transition-timing-function: ease-in-out;
+}
+input[type="radio"]:not([data-native]):not(.custom):checked + label::after {
+  background-color: var(--emphasis);
+  width: 10px;
+  height: 10px;
+}
+input[type="radio"].custom + label { /* A radio will never be [data-native].custom */
+  border: 2px solid transparent; /* experiment: replace transparent with var(--grayer-01) */
+  transition: border-color 200ms ease-in-out; /* TODO: Implement theme transition */
+}
+input[type="radio"].custom:checked + label {
+  border-color: var(--emphasis);
+}
+input[type="color"] {
+  display: none;
+}
+input[type="color"] + label {
+  border: 2px solid black;
+  border-radius: 2px;
+  height: calc(1em - 3px); /* Why 3px? IDK, because it works */
+  width: calc(1em - 3px);
+  display: inline-block;
+  vertical-align: text-top;
 }

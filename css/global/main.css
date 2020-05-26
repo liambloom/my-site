@@ -1,9 +1,13 @@
+:root {
+  --emphasis: #16f;
+}
 body {
   color: var(--text);
   background-color: var(--background);
   margin: 0;
   padding: 0;
-  transition: 1.25s ease-in-out;
+  transition: 1.25s ease-in-out; /* TODO: color transition is delayed in settings menu in chrome */
+  font-family: Arial, Helvetica, sans-serif;
 }
 main {
   margin-top: 60px;

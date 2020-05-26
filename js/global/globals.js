@@ -18,7 +18,7 @@ var type = {
     const findStrings = e => typeof e === "string" || e instanceof String;
     if (types.some(findStrings)) {
       validStrings = types.filter(findStrings).map(e => e.valueOf());
-      types = types.filter(neg(findStrings));
+      types = types.filter(Function.neg(findStrings));
       if (!types.includes(String)) types.push(String);
     }
     if (!types) throw new Error("Cannot check type without being provided with one or more types");
@@ -77,10 +77,18 @@ function setTimeoutAsync (callback, delay, ...args){
 function setImmediateAsync (callback, ...args) {
   return setTimeoutAsync(callback, 0, ...args);
 }
-function neg (func) {
-  type.check(func, Function);
-  return (...args) => !func(...args);
-}
 function getMousePosition (event) {
   return [ event.clientX || event.touches[0].clientX, event.clientY || event.touches[0].clientY ];
 }
+
+Function.neg = func => {
+  type.check(func, Function);
+  return (...args) => !func(...args);
+};
+Node.prototype.insertAfter = function (newNode, referenceNode) {
+  if (this instanceof Document) throw new TypeError("Cannot call method insertAfter on Node of type Document");
+  type.check(newNode, Node);
+  type.check(referenceNode, Node);
+  if (referenceNode.nextSibling) this.insertBefore(newNode, referenceNode.nextSibling);
+  else this.appendChild(newNode);
+};

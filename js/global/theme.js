@@ -1,11 +1,13 @@
 "use strict";
 
-if (document.documentElement.getAttribute("data-theme") === null) document.documentElement.setAttribute("data-theme", matchMedia("(prefers-color-scheme: dark)") ? "dark" : "light");
+var emphasisInput = document.getElementById("emphasis-input");
+
 Object.defineProperties(window, {
   theme: {
     get: () => document.documentElement.getAttribute("data-theme"),
     set: value => {
-      if (value !== "light" && value !== "dark") throw new Error(value + " is not a valid theme");
+      if (value === "auto") value = themeAuto;
+      type.check(value, "light", "dark");
       if (value === document.documentElement.getAttribute("data-theme")) return;
       document.documentElement.setAttribute("data-theme", value);
       const mediaStyle = document.getElementById(value + "-stylesheet");
@@ -29,5 +31,28 @@ Object.defineProperties(window, {
   themeOpposite: {
     get: () => theme === "light" ? "dark" : "light",
     enumerable: true
+  },
+  themeAuto: {
+    get: () => matchMedia("(prefers-color-scheme: dark)") ? "dark" : "light",
+    enumerable: true
+  },
+  emphasisColor: {
+    get: () => new Color(getComputedStyle(root).getPropertyValue("--emphasis").trim()),
+    set: value => {
+      value = new Color(value).hex;
+      root.style.setProperty("--emphasis", value);
+      emphasisInput.value = value;
+    },
+    enumerable: true
   }
 });
+if (document.documentElement.getAttribute("data-theme") === null) document.documentElement.setAttribute("data-theme", themeAuto);
+for (let input of Array.from(document.getElementsByName("theme"))) {
+  input.addEventListener("change", () => {
+    theme = input.value;
+  });
+}
+emphasisInput.addEventListener("change", () => {
+  emphasisColor = emphasisInput.value;
+});
+emphasisInput.value = emphasisColor.hex;

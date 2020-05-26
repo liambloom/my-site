@@ -17,3 +17,28 @@
 #settings-content {
   margin: 10px;
 }
+#settings-content section:not(:last-of-type) {
+  border-bottom: 1px solid var(--contrast-darker);
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  transition: border-bottom-color 1.25s ease-in-out;
+}
+.section-margin {
+  margin-bottom: 10px;
+}
+.indent {
+  margin-left: 5px;
+}
+#settings-content h2 {
+  margin: 0.25em 0;
+  padding: 0;
+  font-size: 1.5em;
+  line-height: 1em; /* 1em is the font size */
+  height: 1em;
+}
+#settings-content h2::after {
+  content: ":";
+}
+#settings-content section h2 ~ :not(.no-indent) {
+  margin-left: 5px;
+}

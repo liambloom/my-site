@@ -173,7 +173,7 @@ class Color {
     if (hex.length === 3 || hex.length === 4) {
       let newHex = "";
       for (let c of hex) newHex += c.repeat(2);
-      newHex = hex;
+      hex = newHex;
     }
     if (hex.length === 6) hex += "ff";
     if (hex.length !== 8) throw new Error(`Hex codes must be 3, 4, 6, or 8 characters long. Received hex code that was ${hex.length} long.`);

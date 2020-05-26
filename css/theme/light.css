@@ -2,6 +2,7 @@
   --background: white;
   --background-secondary: #ddd;
   --darker: var(--background-secondary);
+  --contrast-darker: var(--background);
+  --grayer-01: rgba(0, 0, 0, 0.1);
   --text: black;
-  --emphasis: #06f;
 }

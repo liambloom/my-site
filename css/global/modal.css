@@ -191,14 +191,15 @@
 }
 #textboxes #l-tb {
   grid-area: l;
+  background-color: var(--grayer-01);
   transition-property: color, background-color;
 }
-[data-theme="light"] #l-tb {
+/*[data-theme="light"] #l-tb {
   background-color: rgba(0, 0, 0, 0.1);
 }
 [data-theme="dark"] #l-tb {
   background-color: rgba(255, 255, 255, 0.1);
-}
+}*/
 #hex-tb-container {
   grid-area: hex;
   position: relative;
