@@ -4,6 +4,7 @@ var root = document.documentElement;
 const domParser = new DOMParser();
 var parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
 async function handle (err) {
+  // TODO: Send ajax request to store the error report on the server for bug hunting
   console.error(err);
   if (await confirm("An error has occurred. The page will now reload<br><br>" + err, true)) location.reload();
 }
@@ -92,3 +93,11 @@ Node.prototype.insertAfter = function (newNode, referenceNode) {
   if (referenceNode.nextSibling) this.insertBefore(newNode, referenceNode.nextSibling);
   else this.appendChild(newNode);
 };
+
+// All uncaught errors (normal or async) will trigger these events and will be logged and displayed to the user
+window.addEventListener("error", ({error}) => {
+  handle(error);
+});
+window.addEventListener("unhandledrejection", ({reason}) => {
+  handle(reason);
+});
