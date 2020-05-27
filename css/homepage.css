@@ -1,0 +1,57 @@
+@import url("/fonts/css/Anurati.css");
+
+body {
+  overflow: hidden;
+}
+main, main section {
+  height: calc(100vh - var(--header-height));
+}
+main {
+  scroll-snap-type: y mandatory;
+  overflow: auto;
+}
+main section {
+  scroll-snap-align: center;
+  position: relative;
+}
+#welcome > div {
+  display: flex;
+  width: 0;
+  animation-name: spread, glow;
+  animation-duration: 1.75s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  justify-content: space-evenly;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5em;
+  font-family: "Anurati";
+  color: var(--background);
+  text-shadow: var(--emphasis) 0 0 0;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+#welcome > div > div {
+  min-width: 0;
+}
+@keyframes spread {
+  from { 
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+@keyframes glow {
+  from {
+    text-shadow: var(--emphasis) 0 0 0;
+  }
+  to {
+    text-shadow: var(--emphasis) 0 0 25px;
+  }
+}

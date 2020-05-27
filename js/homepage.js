@@ -1,0 +1,1 @@
+main.style.width = `calc(100vw + ${main.offsetWidth - main.clientWidth}px)`;

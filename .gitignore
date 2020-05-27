@@ -2,3 +2,6 @@
 node_modules/
 .idea/
 .*rc
+# fonts/*/ means that all subfolders of /fonts are ignored except for /fonts/css
+fonts/*/
+!fonts/css/
