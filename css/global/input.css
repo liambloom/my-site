@@ -6,6 +6,7 @@ input[type="button"], button {
   border: 1px solid var(--background-secondary);
   border-radius: 5px;
   transition: 1.25s ease-in-out;
+  cursor: pointer;
 }
 input[type="button"].highlight, button.highlight {
   border: none;
