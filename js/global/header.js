@@ -1,4 +1,5 @@
 // The menu isn't perfect, but I spent way too long on it, and it works good enough
+"strict mode";
 
 const openMenuContainer = document.getElementById("open-menu-container");
 
@@ -48,6 +49,7 @@ var menu = {
         li.addEventListener("click", event => {
           event.stopPropagation();
           menu.depth++;
+          this._invisablify();
           liSubMenu.classList.add("sub-open");
           menu.pushDepth();
         });
@@ -95,12 +97,9 @@ var menu = {
     if (value === this.depth) return;
     if (value < 1) handle(new RangeError(`Menu depth cannot be set to ${value}, must be 1 or greater`));
     this._depth = value;
-    if (value < prev) setTimeout(this._invisablify, 500);
-    else this._invisablify();
     menu.listContainer.style.right = (menu.depth - 1) * menu.listContainer.clientWidth + "px";
   },
   _invisablify () {
-    if (new Error().stack.includes("loadPage")) return;
     const uls = Array.from(document.querySelectorAll("#lists > ul" + " > li > ul".repeat(this.depth - 1) + ".sub-open"));
     if (this.depth === 2 && settings.classList.contains("sub-open")) uls.push(settings);
     for (let ul of uls) ul.classList.remove("sub-open");
