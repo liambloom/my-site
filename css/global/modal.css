@@ -94,7 +94,8 @@
   transition: border-color 1.25s ease-in-out;
 }
 #lightness {
-  /*-webkit-appearance: none;*/
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   grid-area: lightness;
   padding: 0px;
@@ -117,7 +118,8 @@
   transition: border-color 1.25s ease-in-out;
 }
 #lightness::-webkit-slider-thumb {
-  /*-webkit-appearance: none;*/
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   cursor: ns-resize;
   height: 20px;

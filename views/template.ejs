@@ -21,15 +21,15 @@
 
   <!--<link rel="preload" href="<%#- "/pages" + url.pathname + url.search %>" as="fetch">-->
   
-  <script src="/js/global/page-loader.js" type="application/javascript" async></script>
-  <script src="/js/global/globals.js" type="application/javascript" defer></script>
-  <script src="/js/global/Color.js" type="application/javascript" defer></script>
-  <script src="/js/global/cookies.js" type="application/javascript" defer></script>
-  <script src="/js/global/theme.js" type="application/javascript" defer></script>
-  <script src="/js/global/inputs.js" type="application/javascript" defer></script>
-  <script src="/js/global/modal.js" type="application/javascript" defer></script>
-  <script src="/js/global/header.js" type="application/javascript" defer></script>
-  <script src="/js/global/settings.js" type="application/javascript" defer></script>
+  <script src="/js/global/page-loader.js" async></script>
+  <script src="/js/global/globals.js" defer></script>
+  <script src="/js/global/Color.js" defer></script>
+  <script src="/js/global/cookies.js" defer></script>
+  <script src="/js/global/theme.js" defer></script>
+  <script src="/js/global/inputs.js" defer></script>
+  <script src="/js/global/modal.js" defer></script>
+  <script src="/js/global/header.js" defer></script>
+  <script src="/js/global/settings.js" defer></script>
 
   <%# if (hasImports) { %>
     <%#- include(importPath) %>
@@ -115,9 +115,7 @@
       <use href="/svg/logo.svg#logo-bare"></use>
     </svg>-->
   </header>
-  <main>
-    
-  </main>
+  <main></main>
   <div id="modal-overlay"></div>
   <div id="loading-modal" class="modal open no-body">
     <div class="loading-dot"></div>

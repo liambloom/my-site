@@ -4,7 +4,7 @@
 }
 header {
   background-color: var(--background);
-  box-shadow: 0px 0px 5px 5px var(--darker);
+  box-shadow: 0px 0px 5px 5px var(--darker); /* TODO: make this go away on homepage because of bg color */
   transition-property: background-color, color, box-shadow;
   transition-timing-function: ease-in-out;
   transition-duration: 1.25s;

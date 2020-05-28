@@ -1,6 +1,8 @@
 "use strict";
 
+const relList = document.createElement("link").relList;
 let notInitialLoading = false;
+let pageNo = 1;
 var currentPage;
 
 function transition (event) {
@@ -26,9 +28,12 @@ var awaitDocumentReady = new Promise(resolve => {
 });
 function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
   if (currentPage === location.href) return menu.updateMenuState().then(() => false);
+  const id = `Page ${pageNo++}: ${location.href}`;
+  console.time(id);
   window.pageLoadState = "loading";
   if (notInitialLoading) Modal.loading.start();
   else notInitialLoading = true;
+  document.body.classList.add("disable-transitions");
   //document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
   return Promise.all([
     fetch("/pages" + location.pathname, {
@@ -38,13 +43,15 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       })
     })
       .then(page => page.text())
-      .then(page => parseHTML(page))
+      .then(page => (window.parseHTML || (html => new DOMParser().parseFromString(`<div>${html}</div>`, "text/html").body.children[0]))(page))
       .then(page => {
         const imports = page.getElementsByTagName("imports")[0];
+        const title = page.getElementsByTagName("title")[0];
         if (imports) imports.remove();
-        return { page, imports };
+        if (title) title.remove();
+        return { page, imports, title };
       })
-      .then(({ page, imports }) => Promise.all([
+      .then(({ page, imports, title }) => Promise.all([
         new Promise(resolve => { // imports
           let importPromises = [];
           let deferredPromises = [];
@@ -56,9 +63,13 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
                 e = document.createElement("script");
                 for (let attr of og.attributes) e.setAttribute(attr.name, attr.value);
               }
+              if (e.rel && !e.relList.supports(e.rel)) {
+                console.warn(`rel="${e.rel}" is not supported`);
+                continue;
+              }
               e.setAttribute("data-for-page", location.pathname);
               const isDeferred = e.getAttribute("defer") === "" || e.getAttribute("defer") === "true";
-              if (isDeferred) {
+              if (isDeferred && relList.supports("preload")) {
                 link = document.createElement("link");
                 link.rel = "preload";
                 link.as = "script";
@@ -98,7 +109,17 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
           .then(() => {
             window.pageLoadState = "interactive";
             window.dispatchEvent(new Event("pagecontentloaded"));
-          })
+          }),
+        new Promise(resolve => {
+          if (title) title = title.innerText;
+          else {
+            console.warn("Missing title");
+            title = "[Error: Missing Title]";
+          }
+          document.title = title;
+          // TODO: add title to navigation bar at top
+          resolve();
+        })
       ]))
       .then(awaitPageLoad)
       .then(() => Promise.all([
@@ -115,14 +136,16 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
     .then(awaitPageLoad)
     .then(() => {
       currentPage = location.href;
+      document.body.classList.remove("disable-transitions");
       Modal.loading.end();
       window.pageLoadState = "complete";
       window.dispatchEvent(new Event("pageload"));
       history.replaceState(menu.clearedState, "");
       menu.updateMenuState(); // Run asynchronously, NOT awaited
+      console.timeEnd(id);
       return true;
     })
-    .catch(err => awaitPageLoad.then(() => handle(err)));  
+    .catch(err => awaitPageLoad.then(() => handle(err)));
 }
 awaitDocumentReady
   .then(() => {

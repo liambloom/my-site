@@ -1,5 +1,8 @@
 :root {
-  --emphasis: #16f;
+  --emphasis: #0960ec;
+}
+.disable-transitions, .disable-transitions * {
+  transition: none !important;
 }
 body {
   color: var(--text);
