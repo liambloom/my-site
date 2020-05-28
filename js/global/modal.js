@@ -97,10 +97,12 @@ Modal.openModal = document.getElementById("loading-modal");
 Modal.loading = {
   start () {
     Modal.forceOpen(this.modal);
+    document.body.style.cursor = "wait";
   },
   end () {
     if (Modal.openModal === this.modal) Modal.close();
     Modal.queue = Modal.queue.filter(modal => modal !== this.modal);
+    document.body.style.removeProperty("cursor");
   },
   modal: document.getElementById("loading-modal"),
   isOpen: true
