@@ -8,3 +8,13 @@ enterSettings.addEventListener("click", event => {
     setImmediate(() => settings.classList.add("sub-open"));
   }
 });
+
+for (let input of Array.from(document.getElementsByName("theme"))) {
+  input.addEventListener("change", () => {
+    theme = input.value;
+  });
+}
+emphasisInput.addEventListener("change", () => {
+  emphasisColor = emphasisInput.value;
+});
+emphasisInput.value = emphasisColor.hex;
