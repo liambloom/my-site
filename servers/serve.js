@@ -14,7 +14,11 @@ export default function serve(req, res, next, data = {}, callback = p => p) {
     }
     else {
       if (/\/pages\//.test(page)) {
+        for (let subdomain of global.subdomains) {
+          if (page.startsWith(`./pages/${subdomain}/`)) res.status(404);
+        }
         if (req.subdomains.length) page = page.split(/(?<=\/pages)(?=\/)/).join("/" + req.subdomains[0]);
+        if (res.statusCode < 300 && !fs.existsSync(path.join("./views", page) + ".ejs")) res.status(404);
         if (res.statusCode >= 300) {
           const errorName = res.namedError || res.statusCode.toString();
           if (fs.existsSync(path.join("./views/errors/", errorName) + ".ejs")) page = path.join("./errors/", errorName);
@@ -24,7 +28,6 @@ export default function serve(req, res, next, data = {}, callback = p => p) {
             page = "./errors/template";
           }
         }
-        else if (!fs.existsSync(path.join("./views", page) + ".ejs")) res.status(404);
       }
       else {
         res.status(200);
