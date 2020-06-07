@@ -43,3 +43,6 @@ a.blend {
 .before-after .after {
   grid-area: after;
 }
+.u {
+  text-decoration: underline;
+}

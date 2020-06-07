@@ -1,0 +1,5 @@
+# Converted to Array in JS using the code `fs.readFileSync("./servers/domains.txt", "utf8").split("\n").map(e => e.match(/.*?(?=#|$|\r)/)[0].trim()).filter(e => e.length)`
+
+# Wildcard domains that point to the IP address 127.0.0.1
+localtest.me
+lvh.me
