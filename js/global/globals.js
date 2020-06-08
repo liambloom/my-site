@@ -4,7 +4,18 @@ var root = document.documentElement;
 const domParser = new DOMParser();
 var parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
 async function handle (err) {
-  // TODO: Send ajax request to store the error report on the server for bug hunting
+  fetch("/api/error/log", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: err.message,
+      name: err.name,
+      page: location.href,
+      stack: err.stack || null
+    })
+  }).catch(console.error); // Just catch the error so it isn't caught by the listener
   console.error(err);
   if (await confirm("An error has occurred. The page will now reload<br><br>" + err, true)) location.reload();
 }

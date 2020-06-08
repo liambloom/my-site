@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { format } from "util";
 import express from "express";
 import serve from "./serve.js";
 
@@ -49,6 +50,17 @@ app.use((req, res, next) => {
   boundServe();
 });
 
+// Changes color text for a few console functions
+console.error = function error(data, ...args) { // red
+  this._stderr.write("\x1b[31m" + format(data, ...args) + "\x1b[0m\n");
+};
+console.warn = function warn(data, ...args) { // yellow
+  this._stderr.write("\x1b[33m" + format(data, ...args) + "\x1b[0m\n");
+};
+console.debug = function debug(data, ...args) { // cyan
+  this._stdout.write("\x1b[36m" + format(data, ...args) + "\x1b[0m\n");
+};
+
 export function createRoute (name) { // create files for each router (api, admin, etc.) and import this function
   const router = express.Router();
   app.use("/" + name, router);
@@ -62,4 +74,9 @@ export function createSubdomain (name) {
     else next();
   });
   return router;
+}
+export function handle (error, res) {
+  if (res) res.status(500).end();
+  console.error(error);
+   
 }
