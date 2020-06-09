@@ -2,9 +2,11 @@ import * as fs from "fs";
 import { format } from "util";
 import express from "express";
 import serve from "./serve.js";
+import * as db from "./api-internal.js";
 
 const app = express();
 export default app;
+const ALL_SUBS = Symbol("all");
 
 global.subdomains = [];
 app.listen(process.env.PORT || 8080); // This doesn't need to go at the end in most cases, but move it if there's bugs
@@ -50,7 +52,7 @@ app.use((req, res, next) => {
   boundServe();
 });
 
-// Changes color text for a few console functions
+//------------------------------------------------------------------ This section doesn't fit in with the rest of this file ------------
 console.error = function error(data, ...args) { // red
   this._stderr.write("\x1b[31m" + format(data, ...args) + "\x1b[0m\n");
 };
@@ -61,22 +63,37 @@ console.debug = function debug(data, ...args) { // cyan
   this._stdout.write("\x1b[36m" + format(data, ...args) + "\x1b[0m\n");
 };
 
-export function createRoute (name) { // create files for each router (api, admin, etc.) and import this function
-  const router = express.Router();
-  app.use("/" + name, router);
-  return router;
+export function handle(error, res) { // this kind of fits in, it's for handling errors when processing a request
+  if (res) res.status(500).end(); // TODO: Improve this, make it send the error
+  console.error(error);
+  db.error.log(error);
 }
+//--------------------------------------------------------------------------------------------------------------------------------------
+
+app.addRoute = function (name, wildcard = false) { // create files for each router (api, admin, etc.) and import this function
+  if (wildcard && this !== app) throw new Error("Wildcard routes are only allowed on the app, not on other routers");
+  const router = express.Router();
+  this.use("/" + name, (req, res, next) => {
+    // double equals is on purpose, if router.subdomain is null and req.subdomains[0] is undefined, it returns the correct answer
+    if (router.subdomain === ALL_SUBS || router.subdomain == req.subdomains[0]) router(req, res, next);
+    else next(); 
+  });
+  router.addRoute = this.addRoute;
+  if (wildcard) router.subdomain = ALL_SUBS;
+  else if (this === app) router.subdomain = null;
+  else router.subdomain = this.subdomain;
+  return router;
+};
 export function createSubdomain (name) {
   const router = express.Router();
+  if (global.subdomains.includes(name)) console.warn(new Error(`The subdomain name ${name} was initiated twice`));
   global.subdomains.push(name);
   app.use((req, res, next) => {
     if (req.subdomains[0] === name) router(req, res, next);
     else next();
   });
+  router.addRoute = app.addRoute;
+  router.isSubdomain = true;
+  router.subdomain = name;
   return router;
-}
-export function handle (error, res) {
-  if (res) res.status(500).end();
-  console.error(error);
-   
 }

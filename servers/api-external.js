@@ -1,7 +1,7 @@
 import * as db from "./api-internal.js";
-import { createRoute } from "./init.js";
+import app from "./init.js";
 
-const api = createRoute("api");
+const api = app.addRoute("api", true);
 
 api.post("/error/log", async (req, res) => {
   try {

@@ -15,7 +15,8 @@ async function handle (err) {
       page: location.href,
       stack: err.stack || null
     })
-  }).catch(console.error); // Just catch the error so it isn't caught by the listener
+  })
+    .catch(console.error);
   console.error(err);
   if (await confirm("An error has occurred. The page will now reload<br><br>" + err, true)) location.reload();
 }
