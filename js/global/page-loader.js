@@ -26,6 +26,7 @@ var awaitDocumentReady = new Promise(resolve => {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", resolve);
   else resolve();
 });
+
 function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
   if (currentPage === location.href) return menu.updateMenuState().then(() => false);
   const id = `Page ${pageNo++}: ${location.href}`;
@@ -104,7 +105,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
         }),
         awaitDocumentReady
           .then(() => {
-            main.innerHTML = page.innerHTML;
+            (main || (() => document.getElementsByTagName("main")[0])()).innerHTML = page.innerHTML;
           })
           .then(() => {
             window.pageLoadState = "interactive";
@@ -121,10 +122,10 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
           resolve();
         })
       ]))
-      .then(awaitPageLoad)
+      .then(() => awaitPageLoad)
       .then(() => Promise.all([
         transitionLinks, 
-        initCustomInputs
+        (() => initCustomInputs())()
       ]))
       .catch(err => awaitPageLoad.then(() => handle(err))),
     () => {
@@ -133,7 +134,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       }
     }
   ])
-    .then(awaitPageLoad)
+    .then(() => awaitPageLoad)
     .then(() => {
       currentPage = location.href;
       document.body.classList.remove("disable-transitions");
