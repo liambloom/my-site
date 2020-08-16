@@ -8,7 +8,7 @@ export default function serve(req, res, next, data = {}, callback = p => p) {
   try {
     res.type(type || "html");
     if (type) { // if not ejs
-      if (fs.existsSync(page)) res.write(callback(fs.readFileSync(page)));
+      if (fs.existsSync(page)) res.write(callback(fs.readFileSync(page))); 
       else res.status(404);
       res.end();
     }

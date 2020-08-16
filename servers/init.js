@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
   const boundServe = serve.bind(null, req, res, next);
-  for (let domain of fs.readFileSync("./servers/domains.txt", "utf8").split("\n").map(e => e.match(/.*?(?=#|$|\r)/)[0].trim()).filter(e => e.length)) {
+  for (let domain of fs.readFileSync("./servers/domains.dat", "utf8").split("\n").map(e => e.match(/.*?(?=#|$|\r)/)[0].trim()).filter(e => e.length)) {
     if (!req.fullUrl.hostname.endsWith(domain)) {
       continue;
     }
