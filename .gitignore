@@ -6,3 +6,6 @@ node_modules/
 fonts/*/
 !fonts/css/
 sqltools_20200607234612_13548.log
+servers/target/
+servers/Cargo.lock
+.todo

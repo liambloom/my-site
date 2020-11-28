@@ -3,10 +3,10 @@
   <defs>
     <filter id="white">
       <feColorMatrix type="matrix" values="
-      0 0 0 0 1
-      0 0 0 0 1
-      0 0 0 0 1
-      0 0 0 1 0
+        0 0 0 0 1
+        0 0 0 0 1
+        0 0 0 0 1
+        0 0 0 1 0
       "></feColorMatrix>
     </filter>
     <filter id="blue1" x="0" y="0" width="100%" height="100%">
@@ -16,10 +16,10 @@
       0.1758 0.1758 0.1758 0 0
       -->
       <feColorMatrix type="matrix" values="
-      0.05   0.05   0.05   0 0
-      0.125  0.125  0.125  0 0
-      0.23   0.23   0.23   0 0
-      -0.299 -0.587 -0.114 1 0
+        0.05   0.05   0.05   0 0
+        0.125  0.125  0.125  0 0
+        0.23   0.23   0.23   0 0
+        -0.299 -0.587 -0.114 1 0
       "></feColorMatrix>
       <!-- Make alpha chanel more use a relative luminance (blue has less effect)-->
       <!--<feColorMatrix type="matrix" values="
@@ -64,10 +64,8 @@
   <rect width=300 height=75 fill="url(#l-grad)" y=75 filter="url(#blue1)"></rect>
   <rect width=300 height=75 fill="url('#h-grad')" y=150></rect>
   <rect width=300 height=75 fill="url('#h-grad')" y=225 filter="url(#blue1)"></rect>
-  <g>
-    <image href="/img/Coral_Palace.png" width="300" height="300" x=600 filter="url(#white)"></image>
-    <image href="/img/Coral_Palace.png" width="300" height="300" x=600 filter="url(#blue1)"></image>
-  </g>
+  <image href="/img/Coral_Palace.png" width="300" height="300" x=600 filter="url(#white)"></image>
+  <image href="/img/Coral_Palace.png" width="300" height="300" x=600 filter="url(#blue1)"></image>
   <image href="/img/Coral_Palace.png" width="300" height="300" x="300"></image>
   <!--<image href="/img/Coral_Palace.png" width="300" height="300" x="600" filter="url(#blue1)"></image>-->
 </svg>

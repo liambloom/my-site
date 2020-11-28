@@ -1,17 +1,26 @@
 <!DOCTYPE html>
-<html <% if (theme) { %> data-theme="<%- theme %>" <% } %>>
+
+{% let htmlThemeDataAttr %}
+{% match theme %}
+  {% when Some with (themeName) %}
+    {% let htmlThemeDataAttr = "data-theme={}"|format(themeName|escape) %}
+  {% when None %}
+    {% let htmlThemeDataAttr = "".to_string() %}
+{% endmatch %}
+
+<html {{ htmlThemeDataAttr }}>
 
 <head>
   <meta charset="utf8">
 
   <link rel="icon" href="/svg/monospace-l.svg">
-
-  <% if (theme) { %>
-    <link id="theme-stylesheet" rel="stylesheet" href="/css/theme/<%- theme %>.css">
-  <% } else { %>
-    <link id="light-stylesheet" rel="stylesheet" href="/css/theme/light.css" media="not all and (prefers-color-scheme: dark)">
-    <link id="dark-stylesheet" rel="stylesheet" href="/css/theme/dark.css" media="(prefers-color-scheme: dark)">
-  <% } %>
+  {% match theme %}
+    {% when Some with (themeName) %}
+      <link id="theme-stylesheet" rel="stylesheet" href="/css/theme/{{- themeName -}}.css">
+    {% when None %}
+      <link id="light-stylesheet" rel="stylesheet" href="/css/theme/light.css" media="not all and (prefers-color-scheme: dark)">
+      <link id="dark-stylesheet" rel="stylesheet" href="/css/theme/dark.css" media="(prefers-color-scheme: dark)">
+  {% endmatch %}
   <link rel="stylesheet" href="/css/global/main.css">
   <link rel="stylesheet" href="/css/global/input.css">
   <link rel="stylesheet" href="/css/global/header.css">
@@ -30,10 +39,6 @@
   <script src="/js/global/modal.js" defer></script>
   <script src="/js/global/header.js" defer></script>
   <script src="/js/global/settings.js" defer></script>
-
-  <%# if (hasImports) { %>
-    <%#- include(importPath) %>
-  <%# } %>
 </head>
 
 <body class="blur" style="cursor: wait;">
@@ -87,11 +92,35 @@
                 <section>
                   <h2>Theme</h2>
                   <div class="section-margin no-indent">
-                    <input type="radio" name="theme" id="light-theme-radio" value="light" <%= theme === "light" ? "checked" : "" %>>
+                    <!-- check if theme is light, dark, or None-->
+                    {#{% for option in ["Light", "Dark", "Auto"] %}
+                      {% let checkedAttr %}
+                      {% match theme %}
+                        {% when Some with ("light") %}
+                          {% if *option == "Light" %}
+                            {% let checkedAttr = "checked" %}
+                          {% else %}
+                            {% let checkedAttr = "" %}
+                          {% endif %}
+                        {% when Some with ("dark") %}
+                          {% if *option == "Dark" %}
+                            {% let checkedAttr = "checked" %}
+                          {% else %}
+                            {% let checkedAttr = "" %}
+                          {% endif %}
+                        {% when None %}
+                          {% if *option == "Auto" %}
+                            {% let checkedAttr = "checked" %}
+                          {% else %}
+                            {% let checkedAttr = "" %}
+                          {% endif %}
+                      {% endmatch %}
+                    {% endfor %}#}
+                    <input type="radio" name="theme" id="light-theme-radio" value="light">
                     <label for="light-theme-radio">Light</label>
-                    <input type="radio" name="theme" id="dark-theme-radio" value="dark" <%= theme === "dark" ? "checked" : "" %>>
+                    <input type="radio" name="theme" id="dark-theme-radio" value="dark">
                     <label for="dark-theme-radio">Dark</label>
-                    <input type="radio" name="theme" id="auto-theme-radio" value="auto" <%= !theme ? "checked" : "" %>>
+                    <input type="radio" name="theme" id="auto-theme-radio" value="auto">
                     <label for="auto-theme-radio">Auto</label>
                   </div>
                   <div class="indent">
@@ -114,8 +143,9 @@
     <!--<svg>
       <use href="/svg/logo.svg#logo-bare"></use>
     </svg>-->
+    <div id="title">Foo</div>
   </header>
-  <main></main>
+  <main>{{ page }}</main>
   <div id="modal-overlay"></div>
   <div id="loading-modal" class="modal open no-body">
     <div class="loading-dot"></div>
