@@ -8,7 +8,7 @@ async fn main() -> std::io::Result<()> {
     App::new()
       .service(default_template)
       .service(page)
-      .service(file)
+      .service(afs::Files::new("", "../"))
       /*.service(
         afs::Files::new("", "../")*/
       /*.default_handler(|| {}))*/
@@ -17,7 +17,10 @@ async fn main() -> std::io::Result<()> {
       .service(echo)
       .route("/hey", web::get().to(manual_hello))*/
   })
-  .bind("127.0.0.1:8080")?
+  .bind(std::net::SocketAddr::from(([127, 0, 0, 1], match std::env::var("PORT") {
+    Ok(port) => port.parse().unwrap(),
+    Err(_) => 8080
+  })))?
   .run()
   .await
 }
