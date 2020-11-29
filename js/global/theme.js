@@ -10,7 +10,7 @@ Object.defineProperties(window, {
       type.check(value, "light", "dark");
       if (value === document.documentElement.getAttribute("data-theme")) return;
       document.documentElement.setAttribute("data-theme", value);
-      const mediaStyle = document.getElementById(value + "-stylesheet");
+      /*const mediaStyle = document.getElementById(value + "-stylesheet");
       if (mediaStyle) {
         mediaStyle.removeAttribute("media");
         document.getElementById(themeOpposite + "-stylesheet").remove();
@@ -24,7 +24,7 @@ Object.defineProperties(window, {
           document.getElementById(`${themeOpposite}-stylesheet`).remove();
         });
         document.head.appendChild(newStyle);
-      }
+      }*/
     },
     enumerable: true
   },

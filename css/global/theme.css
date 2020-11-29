@@ -1,0 +1,16 @@
+:root[data-theme="light"] {
+  --background: white;
+  --background-secondary: #ddd;
+  --darker: var(--background-secondary);
+  --contrast-darker: var(--background);
+  --grayer-01: rgba(0, 0, 0, 0.1);
+  --text: black;
+}
+:root[data-theme="dark"] {
+  --background: #303133;
+  --background-secondary: #555;
+  --darker: #202020;
+  --contrast-darker: var(--background-secondary);
+  --grayer-01: rgba(255, 255, 255, 0.5);
+  --text: white;
+}
