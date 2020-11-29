@@ -1,12 +1,17 @@
 use actix_web::*;
-//use actix_files as fs;
+use actix_files as afs;
 use server::*;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
   HttpServer::new(|| {
     App::new()
-      .service(index)
+      .service(default_template)
+      .service(page)
+      .service(file)
+      /*.service(
+        afs::Files::new("", "../")*/
+      /*.default_handler(|| {}))*/
       //.service(fs::Files::new("/", "/views/pages"))
       /*.service(hello)
       .service(echo)
