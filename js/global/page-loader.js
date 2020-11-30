@@ -27,6 +27,10 @@ var awaitDocumentReady = new Promise(resolve => {
   else resolve();
 });
 
+awaitPageLoad.then(() => {
+  console.log(document.readyState + " " + performance.now());
+});
+
 function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
   if (currentPage === location.href) return menu.updateMenuState().then(() => false);
   const id = `Page ${pageNo++}: ${location.href}`;
@@ -37,11 +41,12 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
   document.body.classList.add("disable-transitions");
   //document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
   return Promise.all([
-    fetch("/pages" + location.pathname, {
-      method: "POST",
+    fetch(`/views/pages${location.pathname}${location.pathname.endsWith("/") ? "index" : ""}.html`, {
+      method: "GET"
+      /*method: "POST",
       body: JSON.stringify({
         timestamp: new Date().getTime()
-      })
+      })*/
     })
       .then(page => page.text())
       .then(page => (window.parseHTML || (html => new DOMParser().parseFromString(`<div>${html}</div>`, "text/html").body.children[0]))(page))
@@ -96,10 +101,11 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
           }
           resolve(
             Promise.all(importPromises)
-              .then(() => new Promise(resolveInner => {
+              /*.then(() => new Promise(resolveInner => {
                 if (window.pageLoadState === "interactive") resolveInner();
                 else window.addEventListener("pagecontentloaded", resolveInner);
-              }))
+              }))*/
+              .then(() => awaitDocumentReady)
               .then(() => Promise.all(deferredPromises.map(fn => fn())))
           );
         }),
@@ -118,8 +124,11 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
             title = "[Error: Missing Title]";
           }
           document.title = title;
-          // TODO: add title to navigation bar at top
-          resolve();
+          awaitDocumentReady
+            .then(() => {
+              document.getElementById("title").innerText = title;
+              resolve();
+            });
         })
       ]))
       .then(() => awaitPageLoad)

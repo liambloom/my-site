@@ -15,18 +15,26 @@ header {
   left: 0;
   width: 100%;
 }
+header > div {
+  float: left;
+}
 #logo {
   height: 35px;
   margin: calc((var(--header-height) - 35px) / 2);
   margin-left: 50px;
+}
+#title {
+  font-size: 1.75em;
+  height: 1em;
+  margin: calc((var(--header-height) - 1em) / 2) 0;
+  position: relative;
+  bottom: 2px;
 }
 #open-menu-container {
   height: calc(var(--header-height) * 3 / 4);
   width: calc(var(--header-height) * 3 / 4);
   margin: calc(var(--header-height) / 8);
   border-radius: 50%;
-}
-#open-menu-container {
   cursor: pointer;
   position: relative;
   z-index: 3;
