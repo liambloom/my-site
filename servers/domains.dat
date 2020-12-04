@@ -1,6 +1,0 @@
-# Converted to Array in JS using the code `fs.readFileSync("./servers/domains.dat", "utf8").split("\n").map(e => e.match(/.*?(?=#|$|\r)/)[0].trim()).filter(e => e.length)`
-# .dat files are generic and are used to store internal data for an application
-
-# Wildcard domains that point to the IP address 127.0.0.1
-localtest.me
-lvh.me
