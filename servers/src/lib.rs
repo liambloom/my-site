@@ -1,74 +1,27 @@
-use actix_web::{*, http::StatusCode};
-use dev::HttpResponseBuilder;
-use std::fs as fs;
-use actix_files as afs;
+use actix_web::{get, HttpRequest, HttpResponse, Result, error::ResponseError, dev::HttpResponseBuilder,  http::StatusCode};
+use actix_files::NamedFile;
 use askama::Template;
-use std::path::PathBuf;
-use std::error::Error;
-use std::fmt;
-use std::convert::From;
+use std::{io, fmt, convert::From, error::Error};
+use std::borrow::Borrow;
 
 #[derive(Template)]
 #[template(path = "../../views/template.html")]
-struct Base<'a> {
-  theme: Option<&'a str>,
+struct Base {
+  theme: Theme,
 }
 
-#[derive(Template)]
+#[derive(Debug, Template)]
 #[template(path = "../../views/errors/template.html")]
 struct ErrorTemplate {
   status: StatusCode,
 }
 
-#[derive(Debug)]
-enum BasicError {
-  NotFound,
-  InternalError,
-}
-
-impl error::ResponseError for BasicError {
-  fn status_code(&self) -> StatusCode {
-    use BasicError::*;
-
-    match self {
-      NotFound => StatusCode::NOT_FOUND,
-      InternalError => StatusCode::INTERNAL_SERVER_ERROR,
-    }
-  }
-}
-
-impl Error for BasicError {}
-
-impl fmt::Display for BasicError {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self)
-  }
-}
-
-impl From<std::io::Error> for BasicError {
-  fn from(err: std::io::Error) -> BasicError {
-    use std::io::ErrorKind::*;
-
-    match err.kind() {
-      NotFound => BasicError::NotFound,
-      _ => BasicError::InternalError,
-    }
-  }
-}
-
-#[derive(Debug)]
-struct ErrorPage {
-  status: StatusCode,
-}
-
-impl error::ResponseError for ErrorPage {
+impl ResponseError for ErrorTemplate {
   fn error_response(&self) -> HttpResponse {
       HttpResponseBuilder::new(self.status)
         .content_type("text/html")
         .body(
-          ErrorTemplate {
-            status: self.status
-          }
+          self
             .render()
             .unwrap())
   }
@@ -78,44 +31,56 @@ impl error::ResponseError for ErrorPage {
   }
 }
 
-impl Error for ErrorPage {}
+impl Error for ErrorTemplate {}
 
-impl fmt::Display for ErrorPage {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self)
-  }
-}
+impl From<io::Error> for ErrorTemplate {
+  fn from(err: io::Error) -> ErrorTemplate {
+    use io::ErrorKind::*;
 
-impl From<std::io::Error> for ErrorPage {
-  fn from(err: std::io::Error) -> ErrorPage {
-    use std::io::ErrorKind::*;
-
-    match err.kind() {
-      NotFound => ErrorPage { status: StatusCode::NOT_FOUND },
-      _ => ErrorPage { status: StatusCode::INTERNAL_SERVER_ERROR },
+    ErrorTemplate {
+      status: match err.kind() {
+        NotFound => StatusCode::NOT_FOUND,
+        _ => StatusCode::INTERNAL_SERVER_ERROR,
+      }
     }
+    
   }
 }
 
 #[get("{path:[^.]*}")]
-async fn default_template() -> Result<HttpResponse> {
-  Ok(HttpResponse::Ok()
+async fn default_template() -> HttpResponse {
+  HttpResponse::Ok()
     .content_type("text/html")
     .body(
       Base {
-        theme: None,
+        theme: Theme::Auto,
       }
-      .render()
-      .unwrap())
-  )
+        .render()
+        .expect("Base template failed"))
 }
 
 #[get("{path:[^.]*}.html")]
-async fn page(req: HttpRequest) -> Result<afs::NamedFile, ErrorPage> {
-  Ok(afs::NamedFile::open(format!("../{}.html", req.match_info().query("path")))?)
+async fn page(req: HttpRequest) -> Result<NamedFile, ErrorTemplate> {
+  Ok(NamedFile::open(format!("../{}.html", req.match_info().query("path")))?)
 }
 
-#[get("{path:[^.]*}.{ext}")]
-async fn file(req: HttpRequest) -> Result<afs::NamedFile, BasicError> {
-  Ok(afs::NamedFile::open(format!("../{}.{}", req.match_info().query("path"), req.match_info().query("ext")))?)
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+enum Theme {
+  Light,
+  Dark,
+  Auto,
+}
+
+impl Theme {
+  pub const VARIANTS: [Theme; 3] = [Theme::Light, Theme::Dark, Theme::Auto];
+}
+
+impl fmt::Display for Theme {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    match self {
+      Theme::Light => write!(f, "Light"),
+      Theme::Dark => write!(f, "Dark"),
+      Theme::Auto => write!(f, "Auto"),
+    }
+  }
 }

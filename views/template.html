@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 
-{% let themeAttr %}
-{% match theme %}
-  {% when Some with (theme) %}
-    {% let themeAttr = "data-theme={}"|format(theme|escape) %}
-  {% when None %}
-    {% let themeAttr = "".to_string() %}
-{% endmatch %}
-
-<html {{ themeAttr }}>
+<html {% if theme != Theme::Auto %} data-theme="{{- theme.to_string().to_lowercase() -}}" {% endif %}>
 
 <head>
   <meta charset="utf8">
+  <meta name="author" content="Liam Bloom">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
 
   <link rel="icon" href="/svg/monospace-l.svg">
   <link rel="stylesheet" href="/css/global/theme.css">
@@ -87,35 +81,11 @@
                   <h2>Theme</h2>
                   <div class="section-margin no-indent">
                     <!-- check if theme is light, dark, or None-->
-                    {#{% for option in ["Light", "Dark", "Auto"] %}
-                      {% let checkedAttr %}
-                      {% match theme %}
-                        {% when Some with ("light") %}
-                          {% if option == "Light" %}
-                            {% let checkedAttr = "checked" %}
-                          {% else %}
-                            {% let checkedAttr = "" %}
-                          {% endif %}
-                        {% when Some with ("dark") %}
-                          {% if option == "Dark" %}
-                            {% let checkedAttr = "checked" %}
-                          {% else %}
-                            {% let checkedAttr = "" %}
-                          {% endif %}
-                        {% when None %}
-                          {% if option == "Auto" %}
-                            {% let checkedAttr = "checked" %}
-                          {% else %}
-                            {% let checkedAttr = "" %}
-                          {% endif %}
-                      {% endmatch %}
-                    {% endfor %}#}
-                    <input type="radio" name="theme" id="light-theme-radio" value="light">
-                    <label for="light-theme-radio">Light</label>
-                    <input type="radio" name="theme" id="dark-theme-radio" value="dark">
-                    <label for="dark-theme-radio">Dark</label>
-                    <input type="radio" name="theme" id="auto-theme-radio" value="auto">
-                    <label for="auto-theme-radio">Auto</label>
+                    {% for option in Theme::VARIANTS %}
+                      {% let lowercase = option.to_string().to_lowercase() %}
+                      <input type="radio" name="theme" id="{{- lowercase -}}-theme-radio" value="{{- lowercase -}}" {% if theme.borrow() == option %} checked {% endif %}>
+                      <label for="{{- lowercase -}}-theme-radio">{{ option }}</label>
+                    {% endfor %}
                   </div>
                   <div class="indent">
                     Emphasis color: <input type="color" id="emphasis-input">

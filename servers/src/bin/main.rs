@@ -1,26 +1,24 @@
-use actix_web::*;
-use actix_files as afs;
+use actix_web::{App, HttpServer};
+use actix_files::Files;
 use server::*;
+use std::{io::Result, env};
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-  HttpServer::new(|| {
-    App::new()
-      .service(default_template)
-      .service(page)
-      .service(afs::Files::new("", "../"))
-      /*.service(
-        afs::Files::new("", "../")*/
-      /*.default_handler(|| {}))*/
-      //.service(fs::Files::new("/", "/views/pages"))
-      /*.service(hello)
-      .service(echo)
-      .route("/hey", web::get().to(manual_hello))*/
-  })
-  .bind(std::net::SocketAddr::from(([127, 0, 0, 1], match std::env::var("PORT") {
+async fn main() -> Result<()> {
+  let port = match env::var("PORT") {
     Ok(port) => port.parse().unwrap(),
     Err(_) => 8080
-  })))?
-  .run()
-  .await
+  };
+  HttpServer::new(|| {
+    App::new()
+      //.wrap_fn(|| {println!()})
+      .service(default_template)
+      .service(page)
+      .service(Files::new("", "../"))
+  })
+    .bind(("127.0.0.1", port))?
+    .bind(("::1", port))?
+    .bind(":8080")?
+    .run()
+    .await
 }
