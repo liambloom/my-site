@@ -84,3 +84,8 @@ impl fmt::Display for Theme {
     }
   }
 }
+
+#[get("/favicon.ico")]
+async fn favicon() -> Result<NamedFile> {
+  Ok(NamedFile::open("../img/favicon/favicon.ico")?)
+}

@@ -14,6 +14,7 @@ async fn main() -> Result<()> {
       //.wrap_fn(|| {println!()})
       .service(default_template)
       .service(page)
+      .service(favicon)
       .service(Files::new("", "../"))
   })
     .bind(("127.0.0.1", port))?
