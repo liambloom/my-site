@@ -41,7 +41,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
   document.body.classList.add("disable-transitions");
   //document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
   return Promise.all([
-    fetch(`/views/pages${location.pathname}${location.pathname.endsWith("/") ? "index" : ""}.html`, {
+    fetch(`/templates/pages${location.pathname}${location.pathname.endsWith("/") ? "index" : ""}.html`, {
       method: "GET"
       /*method: "POST",
       body: JSON.stringify({
