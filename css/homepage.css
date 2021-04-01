@@ -22,10 +22,10 @@ main section {
   transform: translate(-50%, -50%);
   font-size: 5em;
   font-family: "Anurati";
-  color: var(--background);
+  color: var(--background) !important;
   text-shadow: var(--emphasis) 0 0 0;
   text-align: center;
-  transition: color 1.25s ease-in-out;
+  /*transition: color 1.25s ease-in-out;*/
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -50,10 +50,10 @@ main section {
   height: 2em;
   display: block;
 }
-#scroll-for-more svg use {
+/* #scroll-for-more svg use {
   stroke: var(--text);
   transition: stroke 1.25s ease-in-out;
-}
+} */
 @keyframes spread {
   from { 
     width: 0;

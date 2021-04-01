@@ -1,7 +1,7 @@
 <imports>
   <link rel="stylesheet" href="/css/homepage.css">
-  <link rel="stylesheet" href="/fonts/css/Anurati.css">
   <!-- Imported in html instead of using @import because this loads it first (And not all browsers support preloading) -->
+  <link rel="stylesheet" href="/fonts/css/Anurati.css">
   <link rel="preload" as="font" href="/fonts/Anurati-Regular.woff2" crossorigin>
 
   <script src="/js/homepage.js" type="application/javascript" defer></script>
@@ -21,7 +21,10 @@
   </div>
   <div id="scroll-for-more">
     Scroll For More
-    <svg viewBox="0 0 100 104" xmlns="http://www.w3.org/2000/svg">
+    <!--<embed src="/img/scroll-for-more.svg" type="image/svg+xml" height="100" width="104">
+    </embed>-->
+    {% include "../../img/scroll-for-more.svg" %}
+    <!--<svg viewBox="0 0 100 104" xmlns="http://www.w3.org/2000/svg">
       <symbol id="arrow">
         <path d="M 5 2 l 45 40 l 45 -40" fill="none" stroke-width="10" stroke-linecap="round" />
       </symbol>
@@ -30,10 +33,10 @@
           calcMode="paced" fill="freeze" />
         <animate id="arrowOpacityAnimation" attributeName="opacity" values="0;0.75"
           begin="0s;arrowOpacityAnimation.end+1s" dur="1s" calcMode="spline" fill="freeze" />
-        <!-- I don't understand the begin value, I got it from here: https://stackoverflow.com/a/31690969/11326662 -->
+        <!-- I don't understand the begin value, I got it from here: https://stackoverflow.com/a/31690969/11326662 ->
       </use>
       <use href="#arrow" y="52" />
-    </svg>
+    </svg>-->
   </div>
 </section>
 <section style="background-color: blue;"></section>

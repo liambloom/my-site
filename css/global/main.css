@@ -12,6 +12,10 @@ body {
   transition: 1.25s ease-in-out; /* TODO: color transition is delayed in settings menu in chrome */
   font-family: Arial, Helvetica, sans-serif;
 }
+/*:not(.disable-transitions) {
+  color: var(--text);
+  transition: color 1.25s ease-in-out;
+}*/
 main {
   margin-top: 60px;
 }

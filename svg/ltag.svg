@@ -15,8 +15,8 @@
            h 20
            l 30,-100
            " fill="green" stroke="none"/>
-  <path d="M 120,0
-           h 40
+  <path d="M 125,0
+           h 35
            v 80
            h 20
            v 20
@@ -24,8 +24,8 @@
            v -20
            h 20
            v -60
-           h -20" fill="green" stroke="none"/>lb
-  <path d="M 185,0
+           h -15" fill="green" stroke="none"/>lb
+  <!--<path d="M 185,0
            h 30
            a 20,20 0,0,1 0,40
            h 0
@@ -34,8 +34,8 @@
            z
            M 205,60
            a 12,15 30 1,1 5,25
-           h -5" fill="green" stroke="none" fill-rule="evenodd"/>
-  <path d="M 250,10
+           h -5" fill="green" stroke="none" fill-rule="evenodd"/>-->
+  <path d="M 185,10
            l 60,40
            l -60,40
            v -20

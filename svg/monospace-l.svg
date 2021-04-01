@@ -4,8 +4,8 @@
      baseProfile="full"
      width="100" height="100"
      xmlns="http://www.w3.org/2000/svg">
-  <path d="M 25,0
-           h 40
+  <path d="M 35,0
+           h 35
            v 80
            h 20
            v 20
@@ -13,5 +13,5 @@
            v -20
            h 20
            v -60
-           h -20" fill="green" stroke="none"/>
+           h -15" fill="green" stroke="none"/>
 </svg>
