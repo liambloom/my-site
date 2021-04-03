@@ -1,5 +1,5 @@
-<title>{{ status.canonical_reason().unwrap() }}</title>
+<title>{{ status.canonical_reason }}</title>
 <imports>
   <link rel="stylesheet" href="/css/default-error.css">
 </imports>
-<a id="error-link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/{{ status.as_u16() }}" class="blend">{{ status.canonical_reason().unwrap() }}</a>
+<a id="error-link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/{{ status.status_code }}" class="blend">{{ status.canonical_reason }}</a>

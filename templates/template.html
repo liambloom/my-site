@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html {% if theme != Theme::Auto %} data-theme="{{- theme.to_string().to_lowercase() -}}" {% endif %}>
+<html {% if theme != theme_data.auto %} data-theme="{{- theme | lower -}}" {% endif %}>
 
 <head>
   <meta charset="utf8">
@@ -81,9 +81,9 @@
                   <h2>Theme</h2>
                   <div class="section-margin no-indent">
                     <!-- check if theme is light, dark, or None-->
-                    {% for option in Theme::VARIANTS %}
-                      {% let lowercase = option.to_string().to_lowercase() %}
-                      <input type="radio" name="theme" id="{{- lowercase -}}-theme-radio" value="{{- lowercase -}}" {% if theme.borrow() == option %} checked {% endif %}>
+                    {% for option in theme_data.variants %}
+                      {% set lowercase = option | lower %}
+                      <input type="radio" name="theme" id="{{- lowercase -}}-theme-radio" value="{{- lowercase -}}" {% if theme == option %} checked {% endif %}>
                       <label for="{{- lowercase -}}-theme-radio">{{ option }}</label>
                     {% endfor %}
                   </div>

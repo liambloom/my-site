@@ -14,7 +14,6 @@ async fn main() -> Result<()> {
         App::new()
         //.wrap_fn(|| {println!()})
         .service(default_template)
-        .service(index)
         .service(page)
         .service(favicon)
         .service(Files::new("", "."))
