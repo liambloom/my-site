@@ -8,10 +8,6 @@ pub enum Theme {
     Auto,
 }
 
-/*impl Theme {
-    pub const VARIANTS: [Theme; 3] = [Theme::Light, Theme::Dark, Theme::Auto];
-}*/
-
 impl fmt::Display for Theme {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -24,15 +20,11 @@ impl fmt::Display for Theme {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize)]
 pub struct ThemeData {
-    light: Theme,
-    dark: Theme,
     auto: Theme,
     variants: [Theme; 3],
 }
 
 pub const THEME_DATA: ThemeData = ThemeData {
-    light: Theme::Light,
-    dark: Theme::Dark,
     auto: Theme::Auto,
     variants: [Theme::Light, Theme::Dark, Theme::Auto],
 };

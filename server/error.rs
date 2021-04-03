@@ -1,24 +1,10 @@
-use actix_web::{get, HttpRequest, HttpResponse, Result, error::ResponseError, dev::HttpResponseBuilder,  http::StatusCode};
-//use actix_files::NamedFile;
-use super::{templates, UnwrapExit};
-//use askama::Template;
+use crate::tera;
 use std::{io, convert::From, error::Error, fmt};
-use tera::Context;
+use actix_web::{HttpResponse, error::ResponseError, dev::HttpResponseBuilder,  http::StatusCode};
 use serde::Serialize;
+use ::tera::Context;
 
-#[get("templates/{path:[^.]*.html}")]
-pub async fn page(req: HttpRequest) -> Result<String, ErrorTemplate> {
-    let pagename = req.match_info().query("path");
-    //println!("{}", pagename);
-    //Ok(NamedFile::open(req.match_info().query("path"))?)
-    templates().render(pagename, &Context::new()).map_err(|e| {
-        eprintln!("{}", e);
-        e.into()
-    })
-}
-
-#[derive(Debug/*, Template*/)]
-//#[template(path = "errors/template.html")]
+#[derive(Debug)]
 pub struct ErrorTemplate {
     status: StatusCode,
 }
@@ -42,8 +28,7 @@ impl fmt::Display for ErrorTemplate {
         let mut ctx = Context::new();
         ctx.insert("status", &SerializableStatusCode::from(self.status));
         // TEMPLATES.render_to() takes an io::Write, f implements fmt::Write
-        write!(f, "{}", templates().render("errors/template.html", &ctx).unwrap_exit());
-        Ok(())
+        write!(f, "{}", tera().render("errors/template.html", &ctx).unwrap_exit())
     }
 }
 
@@ -84,6 +69,34 @@ impl From<StatusCode> for SerializableStatusCode {
         Self {
             status_code: status.as_u16(),
             canonical_reason: status.canonical_reason().or(Some("[Reason not found]")).unwrap_exit(),
+        }
+    }
+}
+
+pub trait UnwrapExit<T> {
+    fn unwrap_exit(self) -> T;
+}
+
+impl<T, E: std::fmt::Display> UnwrapExit<T> for std::result::Result<T, E> {
+    fn unwrap_exit(self) -> T {
+        match self {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("{}", e);
+                std::process::exit(1);
+            }
+        }
+    }
+}
+
+impl<T> UnwrapExit<T> for Option<T> {
+    fn unwrap_exit(self) -> T {
+        match self {
+            Some(v) => v,
+            None => {
+                eprintln!("Tried to unwrap `None` value");
+                std::process::exit(1);
+            }
         }
     }
 }

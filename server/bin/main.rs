@@ -1,6 +1,6 @@
 use actix_web::{App, HttpServer};
 use actix_files::Files;
-use server::*;
+use server::{*, error::UnwrapExit, templates::tera};
 use std::{io::Result, env};
 
 #[actix_web::main]
@@ -9,10 +9,11 @@ async fn main() -> Result<()> {
         Ok(port) => port.parse().unwrap_exit(),
         Err(_) => 8080
     };
+
+    let _ = tera();
     
     HttpServer::new(|| {
         App::new()
-        //.wrap_fn(|| {println!()})
         .service(default_template)
         .service(page)
         .service(favicon)
