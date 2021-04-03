@@ -4,21 +4,24 @@ var root = document.documentElement;
 const domParser = new DOMParser();
 var parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
 async function handle (err) {
-  fetch("/api/error/log", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      message: err.message,
-      name: err.name,
-      page: location.href,
-      stack: err.stack || null
+  try {
+    fetch("/api/error/log", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: err.message,
+        name: err.name,
+        page: location.href,
+        stack: err.stack || null
+      })
     })
-  })
-    .catch(console.error);
-  console.error(err);
-  if (await confirm("An error has occurred. The page will now reload<br><br>" + err, true)) location.reload();
+      .catch(console.error);
+    console.error(err);
+    if (await confirm("An error has occurred. The page will now reload<br><br>" + err, true)) location.reload();
+  }
+  catch (_e) {}
 }
 function remakeElement (el) {
   const newEl = document.createElement(el.tagName);
