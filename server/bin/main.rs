@@ -6,7 +6,7 @@ use std::{io::Result, env};
 #[actix_web::main]
 async fn main() -> Result<()> {
     let port = match env::var("PORT") {
-        Ok(port) => port.parse().unwrap(),
+        Ok(port) => port.parse().unwrap_exit(),
         Err(_) => 8080
     };
     

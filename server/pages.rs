@@ -1,6 +1,6 @@
 use actix_web::{get, HttpRequest, HttpResponse, Result, error::ResponseError, dev::HttpResponseBuilder,  http::StatusCode};
 //use actix_files::NamedFile;
-use super::TEMPLATES;
+use super::{templates, UnwrapExit};
 //use askama::Template;
 use std::{io, convert::From, error::Error, fmt};
 use tera::Context;
@@ -11,7 +11,7 @@ pub async fn page(req: HttpRequest) -> Result<String, ErrorTemplate> {
     let pagename = req.match_info().query("path");
     //println!("{}", pagename);
     //Ok(NamedFile::open(req.match_info().query("path"))?)
-    TEMPLATES.render(pagename, &Context::new()).map_err(|e| {
+    templates().render(pagename, &Context::new()).map_err(|e| {
         eprintln!("{}", e);
         e.into()
     })
@@ -42,7 +42,7 @@ impl fmt::Display for ErrorTemplate {
         let mut ctx = Context::new();
         ctx.insert("status", &SerializableStatusCode::from(self.status));
         // TEMPLATES.render_to() takes an io::Write, f implements fmt::Write
-        write!(f, "{}", TEMPLATES.render("errors/template.html", &ctx).unwrap());
+        write!(f, "{}", templates().render("errors/template.html", &ctx).unwrap_exit());
         Ok(())
     }
 }
@@ -83,7 +83,7 @@ impl From<StatusCode> for SerializableStatusCode {
     fn from(status: StatusCode) -> Self {
         Self {
             status_code: status.as_u16(),
-            canonical_reason: status.canonical_reason().or(Some("[Reason not found]")).unwrap(),
+            canonical_reason: status.canonical_reason().or(Some("[Reason not found]")).unwrap_exit(),
         }
     }
 }
