@@ -15,18 +15,15 @@ fn tera_init() -> Tera {
 pub fn tera() -> RwLockReadGuard<'static, Tera> {
     static ONCE: Once = Once::new();
     static mut TERA: *const RwLock<Tera> = ptr::null();
-    static mut WATCHER: *const RecommendedWatcher = ptr::null();
     static mut RCV: *const Mutex<Receiver<DebouncedEvent>> = ptr::null();
 
     unsafe {
         ONCE.call_once(|| {
             let (tx, rx) = channel();
             TERA = mem::transmute(Box::new(RwLock::new(tera_init())));
-            WATCHER = mem::transmute(Box::new({
-                let mut watcher: RecommendedWatcher = Watcher::new(tx, Duration::from_millis(0)).unwrap_exit();
-                watcher.watch("templates", RecursiveMode::Recursive).unwrap_exit();
-                watcher
-            }));
+            let mut watcher: RecommendedWatcher = Watcher::new(tx, Duration::from_millis(0)).unwrap_exit();
+            watcher.watch("templates", RecursiveMode::Recursive).unwrap_exit();
+            mem::forget(watcher);
             RCV = mem::transmute(Box::new(Mutex::new(rx)));
         });
 
