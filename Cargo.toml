@@ -21,4 +21,4 @@ chrono = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 
 # Possibly add a feature for this, because it isn't required in prod
-notify = "4"
+sha-1 = "0.9"
