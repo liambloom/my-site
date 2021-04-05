@@ -63,7 +63,7 @@ fn hash_dir(hasher: &mut Sha1, dir: ReadDir) {
 }
 
 #[cfg(not(debug_assertions))]
-fn tera() -> &'static Tera {
+pub fn tera() -> &'static Tera {
     static ONCE: Once = Once::new();
     static mut TERA: *const Tera = ptr::null();
 
