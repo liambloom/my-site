@@ -36,6 +36,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
   const id = `Page ${pageNo++}: ${location.href}`;
   console.time(id);
   window.pageLoadState = "loading";
+  document.body.setAttribute("data-pageLoadState", "loading");
   if (notInitialLoading) Modal.loading.start();
   else notInitialLoading = true;
   document.body.classList.add("disable-transitions");
@@ -115,6 +116,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
           })
           .then(() => {
             window.pageLoadState = "interactive";
+            document.body.setAttribute("data-pageLoadState", "interactive");
             window.dispatchEvent(new Event("pagecontentloaded"));
           }),
         new Promise(resolve => {
@@ -138,7 +140,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       ]))
       .catch(err => awaitPageLoad.then(() => handle(err))),
     () => {
-      for (let e of Array.from(document.querySelectorAll("[data-for-page]"))) {
+      for (let e of Array.from(document.head.querySelectorAll("[data-for-page]"))) {
         if (e.getAttribute("data-for-page") !== location.pathname) e.remove();
       }
     }
@@ -149,6 +151,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       document.body.classList.remove("disable-transitions");
       Modal.loading.end();
       window.pageLoadState = "complete";
+      document.body.setAttribute("data-pageLoadState", "complete");
       window.dispatchEvent(new Event("pageload"));
       history.replaceState(menu.clearedState, "");
       menu.updateMenuState(); // Run asynchronously, NOT awaited

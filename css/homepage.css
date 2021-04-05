@@ -25,11 +25,14 @@ main section {
   color: var(--background) !important;
   text-shadow: var(--emphasis) 0 0 0;
   text-align: center;
-  /*transition: color 1.25s ease-in-out;*/
+  transition: color 1.25s ease-in-out;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+body[data-pageLoadState="complete"] #welcome > div:first-of-type {
+  animation: spread 1.75s ease forwards, glow 3s ease-in-out forwards;
 }
 #welcome > div:first-of-type > div {
   min-width: 0;

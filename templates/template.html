@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 
-<html {% if theme != theme_data.auto %} data-theme="{{- theme | lower -}}" {% endif %}>
+<html {% if theme != theme_data.auto %} data-theme="{{- theme | lower -}}" {% endif %} lang="en">
 
 <head>
   <meta charset="utf8">
   <meta name="author" content="Liam Bloom">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="icon" href="/svg/monospace-l.svg">
+  <!-- TODO: minify css and js -->
+
+  <!--<link rel="icon" href="/svg/monospace-l.svg">-->
   <link rel="stylesheet" href="/css/global/theme.css">
   <link rel="stylesheet" href="/css/global/main.css">
   <link rel="stylesheet" href="/css/global/input.css">
@@ -16,7 +18,7 @@
   <link rel="stylesheet" href="/css/global/modal.css">
   <link rel="stylesheet" href="/css/global/settings.css">
 
-  <!--<link rel="preload" href="<%#- "/pages" + url.pathname + url.search %>" as="fetch">-->
+  {#<link rel="preload" href="{{- "/pages" + url.pathname + url.search }}" as="fetch">#}
 
   <script src="/js/global/page-loader.js" async></script>
   <script src="/js/global/globals.js" defer></script>
@@ -27,9 +29,19 @@
   <script src="/js/global/modal.js" defer></script>
   <script src="/js/global/header.js" defer></script>
   <script src="/js/global/settings.js" defer></script>
+
+  <style>
+    body:not([data-pageLoadState="complete"]) {
+        cursor: wait;
+    }
+
+    body:not([data-pageLoadState="complete"]) main {
+      opacity: 0;
+    }
+  </style>
 </head>
 
-<body>
+<body data-pageLoadState="loading">
   <header>
     <nav>
       <div id="back">
@@ -107,9 +119,9 @@
     <!--<svg>
       <use href="/svg/logo.svg#logo-bare"></use>
     </svg>-->
-    <div id="title">Foo</div>
+    <div id="title"><!-- TODO: Add a placeholder title, or maybe a blur like google --></div>
   </header>
-  <main style="opacity: 0; cursor: wait;"></main>
+  <main></main>
   <div id="modal-overlay" class="hidden"></div>
   <!-- TODO: Make loading spinner w/ CSS or SVG -->
   <!--<div id="loading-modal" class="modal open no-body">

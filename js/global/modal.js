@@ -97,14 +97,14 @@ Modal.queue = [];
 Modal.loading = {
   start () {
     /*Modal.forceOpen(this.modal);*/
-    main.style.opacity = 0;
-    main.style.cursor = "wait";
+    /*main.style.opacity = 0;
+    main.style.cursor = "wait";*/
   },
   end () {
     /*if (Modal.openModal === this.modal) Modal.close();
     Modal.queue = Modal.queue.filter(modal => modal !== this.modal);*/
-    main.style.removeProperty("cursor");
-    main.style.opacity = 1;
+    /*main.style.removeProperty("cursor");
+    main.style.opacity = 1;*/
   },
   //modal: document.getElementById("loading-modal"),
   //isOpen: true
