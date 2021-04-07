@@ -18,6 +18,9 @@ compile_error!("You must specify either dev or release feature");
 #[cfg(all(feature = "dev", feature = "release"))]
 compile_error!("You cannot specify both dev and release feature");
 
+#[cfg(any(all(feature = "dev", not(debug_assertions)), all(feature = "release", debug_assertions)))]
+compile_error!("Feature does not match debug_assertions value");
+
 #[derive(Debug, Deserialize)]
 struct DefaultQuery {
     april1: Option<String>,
