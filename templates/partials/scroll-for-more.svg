@@ -4,6 +4,9 @@
      baseProfile="full"
      viewBox="0 0 100 104"
      xmlns="http://www.w3.org/2000/svg">
+  <symbol id="arrow">
+    <path d="M 5 5 l 45 40 l 45 -40" fill="none" stroke-width="10" stroke-linecap="round" />
+  </symbol>
 
   <style>
     use {
@@ -13,15 +16,12 @@
   </style>
 
   <use href="#arrow" opacity="0.5" y="0">
-        <animate id="arrowYAnimation" attributeName="y" values="0;52" begin="0s;arrowYAnimation.end+1s" dur="1s"
-          calcMode="paced" fill="freeze" />
-        <animate id="arrowOpacityAnimation" attributeName="opacity" values="0;0.75"
-          begin="0s;arrowOpacityAnimation.end+1s" dur="1s" calcMode="paced" fill="freeze" />
-        <!-- I don't understand the begin value, I got it from here: https://stackoverflow.com/a/31690969/11326662 -->
-      </use>
-  <symbol id="arrow">
-    <path d="M 5 5 l 45 40 l 45 -40" fill="none" stroke-width="10" stroke-linecap="round" />
-  </symbol>
+    <animate id="arrowYAnimation" attributeName="y" values="0;52" begin="0s;arrowYAnimation.end+1s" dur="1s"
+      calcMode="paced" fill="freeze" />
+    <animate id="arrowOpacityAnimation" attributeName="opacity" values="0;0.75"
+      begin="0s;arrowOpacityAnimation.end+1s" dur="1s" calcMode="paced" fill="freeze" />
+    <!-- I don't understand the begin value, I got it from here: https://stackoverflow.com/a/31690969/11326662 -->
+  </use>
   
   <use href="#arrow" y="52" />
 </svg>
