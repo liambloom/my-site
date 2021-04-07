@@ -1,5 +1,7 @@
 "use strict";
 
+// FIXME: MAJOR BUG: Going to same page twice causes error because of variable redecleration
+
 const relList = document.createElement("link").relList;
 let notInitialLoading = false;
 let pageNo = 1;
@@ -10,7 +12,8 @@ function transition (event) {
   history.pushState(menu.clearedState, "", this.href);
   loadPage();
 }
-function transitionLinks () {
+async function transitionLinks () {
+  console.log("transitioned");
   for (let link of Array.from(document.getElementsByTagName("a"))) {
     if (new URL(link.href).origin === location.origin) {
       link.removeEventListener("click", transition);
@@ -135,7 +138,7 @@ function loadPage () { // : Promise<boolean> -- If a new page was navigated to, 
       ]))
       .then(() => awaitPageLoad)
       .then(() => Promise.all([
-        transitionLinks, 
+        transitionLinks(), 
         (() => initCustomInputs())()
       ]))
       .catch(err => awaitPageLoad.then(() => handle(err))),

@@ -39,6 +39,7 @@ body[data-pageLoadState="complete"] #welcome > div:first-of-type {
 }
 #scroll-for-more {
   opacity: 0;
+  /* FIXME: This sometimes transitions text color after being added */
   transition: opacity 1.5s ease-in-out;
   position: absolute;
   left: 50%;
