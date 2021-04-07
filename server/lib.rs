@@ -12,6 +12,12 @@ use error::*;
 use theme::{Theme, THEME_DATA};
 use templates::tera;
 
+#[cfg(not(any(feature = "dev", feature = "release")))]
+compile_error!("You must specify either dev or release feature");
+
+#[cfg(all(feature = "dev", feature = "release"))]
+compile_error!("You cannot specify both dev and release feature");
+
 #[derive(Debug, Deserialize)]
 struct DefaultQuery {
     april1: Option<String>,

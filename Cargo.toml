@@ -19,6 +19,10 @@ actix-files = "0.4"
 tera = "1"
 chrono = "0.4"
 serde = { version = "1.0", features = ["derive"] }
+sha-1 = { version = "0.9", optional = true }
 
-# Possibly add a feature for this, because it isn't required in prod
-sha-1 = "0.9"
+[features]
+default = ["dev"]
+dev = ["auto-reload"]
+release = []
+auto-reload = ["sha-1"]

@@ -2,16 +2,16 @@ use crate::error::UnwrapExit;
 use std::{sync::Once, ptr, mem};
 use tera::Tera;
 
-#[cfg(debug_assertions)]
+#[cfg(feature = "auto-reload")]
 use std::{sync::{RwLock, RwLockReadGuard, Mutex}, fs::{read_dir, ReadDir, read, read_link}};
-#[cfg(debug_assertions)]
+#[cfg(feature = "auto-reload")]
 use sha1::{Sha1, Digest};
 
 fn tera_init() -> Tera {
     Tera::new("templates/**/*").unwrap_exit()
 }
 
-#[cfg(debug_assertions)]
+#[cfg(feature = "auto-reload")]
 pub fn tera() -> RwLockReadGuard<'static, Tera> {
     static ONCE: Once = Once::new();
     static mut TERA: *const RwLock<Tera> = ptr::null();
@@ -36,14 +36,14 @@ pub fn tera() -> RwLockReadGuard<'static, Tera> {
     }
 }
 
-#[cfg(debug_assertions)]
+#[cfg(feature = "auto-reload")]
 fn get_hash() -> [u8; 20] {
     let mut hasher = Sha1::new();
     hash_dir(&mut hasher, read_dir("templates").unwrap_exit());
     *hasher.finalize().as_mut()
 }
 
-#[cfg(debug_assertions)]
+#[cfg(feature = "auto-reload")]
 fn hash_dir(hasher: &mut Sha1, dir: ReadDir) {
     for entry in dir {
         let entry = entry.unwrap_exit();
@@ -62,7 +62,7 @@ fn hash_dir(hasher: &mut Sha1, dir: ReadDir) {
     }
 }
 
-#[cfg(not(debug_assertions))]
+#[cfg(not(feature = "auto-reload"))]
 pub fn tera() -> &'static Tera {
     static ONCE: Once = Once::new();
     static mut TERA: *const Tera = ptr::null();
