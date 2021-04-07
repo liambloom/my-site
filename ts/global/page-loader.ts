@@ -3,9 +3,10 @@
 // FIXME: MAJOR BUG: Going to same page twice causes error because of variable redecleration
 
 const relList = document.createElement("link").relList;
-let notInitialLoading = false;
+//let notInitialLoading = false;
 let pageNo = 1;
 var currentPage: string;
+var main: HTMLElement;
 
 async function transition(this: HTMLAnchorElement, event: Event) {
   event.preventDefault();
@@ -35,13 +36,13 @@ awaitPageLoad.then(() => {
 });
 
 function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
-  if (currentPage === location.href) return import("ts/global/header.js").then((header) => header.menu.updateMenuState().then(() => false));
+  if (currentPage === location.href) return import("ts/global/header.js").then(({ menu }) => menu.updateMenuState()).then(() => false);
   const id = `Page ${pageNo++}: ${location.href}`;
   console.time(id);
-  window.pageLoadState = "loading";
+  // window.pageLoadState = "loading";
   document.body.setAttribute("data-pageLoadState", "loading");
-  if (notInitialLoading) Modal.loading.start();
-  else notInitialLoading = true;
+  //if (notInitialLoading) (await import("ts/global/modal.js")).Modal.loading.start();
+  //else notInitialLoading = true;
   document.body.classList.add("disable-transitions");
   //document.getElementById("prev-page").innerHTML = document.getElementById("current-page").innerHTML;
   return Promise.all([
@@ -53,7 +54,7 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
       })*/
     })
       .then(page => page.text())
-      .then(page => (window.parseHTML || (html => new DOMParser().parseFromString(`<div>${html}</div>`, "text/html").body.children[0]))(page))
+      .then(page => new DOMParser().parseFromString(`<div>${page}</div>`, "text/html").body.children[0])
       .then(page => {
         const imports = page.getElementsByTagName("imports")[0];
         const title = page.getElementsByTagName("title")[0];
@@ -61,32 +62,39 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
         if (title) title.remove();
         return { page, imports, title };
       })
-      .then(({ page, imports, title }) => Promise.all([
+      .then(({ page, imports, title: titleElement }) => Promise.all([
         new Promise(resolve => { // imports
-          let importPromises = [];
-          let deferredPromises = [];
+          let importPromises: Promise<void>[] = [];
+          let deferredPromises: (() => Promise<void>)[] = [];
           if (imports) {
             for (let e of Array.from(imports.children)) {
-              let link;
-              if (e.tagName === "SCRIPT") { // This is defined as a function in globals, but I don't want to wait everything to be fetched, parsed, and run before I can do anything.
+              let link: HTMLLinkElement;
+              let isDeferred: boolean;
+              if (e instanceof HTMLScriptElement) { // This is defined as a function in globals, but I don't want to wait everything to be fetched, parsed, and run before I can do anything.
                 const og = e;
                 e = document.createElement("script");
                 for (let attr of og.attributes) e.setAttribute(attr.name, attr.value);
+                isDeferred = e.getAttribute("defer") === "" || e.getAttribute("defer") === "true";
+                if (isDeferred && relList.supports("preload")) {
+                  link = document.createElement("link");
+                  link.rel = "preload";
+                  link.as = "script";
+                  link.href = (<HTMLScriptElement>e).src;
+                  document.head.appendChild(link);
+                }
               }
-              if (e.rel && !e.relList.supports(e.rel)) {
-                console.warn(`rel="${e.rel}" is not supported`);
-                continue;
+              else if (e instanceof HTMLLinkElement) {
+                isDeferred = false;       
+                if (e.rel && !e.relList.supports(e.rel)) {
+                  console.warn(`rel="${e.rel}" is not supported`);
+                  continue;
+                }
               }
+              else
+                throw new TypeError("Expected link or script, found " + e.tagName);
               e.setAttribute("data-for-page", location.pathname);
-              const isDeferred = e.getAttribute("defer") === "" || e.getAttribute("defer") === "true";
-              if (isDeferred && relList.supports("preload")) {
-                link = document.createElement("link");
-                link.rel = "preload";
-                link.as = "script";
-                link.href = e.src;
-                document.head.appendChild(link);
-              }
-              const importPromise = () => new Promise((resolveImport, rejectImport) => {
+              
+              const importPromise: () => Promise<void> = () => new Promise((resolveImport, rejectImport) => {
                 e.addEventListener("load", () => {
                   resolveImport();
                 });
@@ -118,12 +126,13 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
             (main || (() => document.getElementsByTagName("main")[0])()).innerHTML = page.innerHTML;
           })
           .then(() => {
-            window.pageLoadState = "interactive";
+            //window.pageLoadState = "interactive";
             document.body.setAttribute("data-pageLoadState", "interactive");
             window.dispatchEvent(new Event("pagecontentloaded"));
           }),
-        new Promise(resolve => {
-          if (title) title = title.innerText;
+        new Promise<void>(resolve => {
+          let title: string;
+          if (titleElement) title = titleElement.innerText;
           else {
             console.warn("Missing title");
             title = "[Error: Missing Title]";
@@ -131,17 +140,18 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
           document.title = title;
           awaitDocumentReady
             .then(() => {
-              document.getElementById("title").innerText = title;
+              document.getElementById("title")!.innerText = title;
               resolve();
             });
         })
       ]))
       .then(() => awaitPageLoad)
       .then(() => Promise.all([
-        transitionLinks(), 
-        (() => initCustomInputs())()
+        transitionLinks(),
+        import("ts/global/inputs.js")
+          .then(({ init }) => init())
       ]))
-      .catch(err => awaitPageLoad.then(() => handle(err))),
+      .catch(err => awaitPageLoad.then(async () => (await import("ts/global/globals.js")).handle(err))),
     () => {
       for (let e of Array.from(document.head.querySelectorAll("[data-for-page]"))) {
         if (e.getAttribute("data-for-page") !== location.pathname) e.remove();
@@ -149,23 +159,26 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
     }
   ])
     .then(() => awaitPageLoad)
-    .then(() => {
+    .then(async () => {
       currentPage = location.href;
       document.body.classList.remove("disable-transitions");
-      Modal.loading.end();
-      window.pageLoadState = "complete";
+      //window.pageLoadState = "complete";
       document.body.setAttribute("data-pageLoadState", "complete");
       window.dispatchEvent(new Event("pageload"));
+      const { menu } = await import("ts/global/header.js");
       history.replaceState(menu.clearedState, "");
       menu.updateMenuState(); // Run asynchronously, NOT awaited
       console.timeEnd(id);
       return true;
     })
-    .catch(err => awaitPageLoad.then(() => handle(err)));
+    .catch(err => awaitPageLoad
+      .then(() => import("ts/global/globals.js"))
+      .then(({ handle }) => handle(err))
+      .then(() => false));
 }
 awaitDocumentReady
   .then(() => {
-    window.main = document.getElementsByTagName("main")[0];
+    main = document.getElementsByTagName("main")[0];
   });
 
 window.addEventListener("popstate", loadPage);

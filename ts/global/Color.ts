@@ -2,11 +2,21 @@
 
 const key = Symbol("ext");
 
-class Color {
-  constructor (arg) {
+interface Indexable {
+  [key: string]: any;
+}
+
+export class Color {
+  constructor(arg: Symbol);
+  constructor(arg: string);
+  constructor(arg: Symbol | string) {
     let r, g, b, a; // These are not used, but they need to be declared in order for the cool&compact one liner on line 11 to work
-    if (arg === key) return; // This means that the necessary vars will be set by an external function
-    if (/^(?:rgb|hsl)a?\(/.test(arg)) return Color[arg.split("(")[0]](...(arg.match(/\(.*?\)/)[0].slice(1, -1).split(/,/g).map(e => parseFloat(e))));
+    if (arg === key) 
+      return; // This means that the necessary vars will be set by an external function
+    else if (arg instanceof Symbol)
+      throw new TypeError("Expected string, received type Symbol");
+    if (/^\s*(?:rgb|hsl)(?:a\s*\((?=(?:[^,]*,){3}[^,]*$)|\s*\((?=(?:[^,]*,){2}[^,]*$))(?:\s*(?:25[0-5]|2[0-4]\d|[0-1]?\d{1,2})\s*(?:,(?!\s*\))|(?=\s*\)))\s*){3}(?:[0-1](?:\.0*)?|0?\.\d*)?\s*\)$/i.test(arg))
+      return ((Color as Indexable)[arg.split("(")[0].toLowerCase().trim()] as ((arg0: number, arg1: number, arg2: number, arg3?: number) => Color))(...<[number, number, number, number?]>(arg.match(/\(.*?\)/)![0].slice(1, -1).split(/,/g).map(e => parseFloat(e))));
     else if (arg[0] === "#") return Color.hex(arg);
     else if (arg instanceof Color) return Color.rgba(...Object.values({r, g, b, a} = arg));
     else throw new Error("Expected format rgb, rgba, hsl, hsla, or 3, 4, 6, or 8 digit hex code");

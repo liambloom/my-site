@@ -3,7 +3,7 @@
 var root = document.documentElement;
 const domParser = new DOMParser();
 var parseHTML = html => domParser.parseFromString(`<div>${html}</div>`, "text/html").body.children[0];
-async function handle (err) {
+export async function handle(err) {
   try {
     fetch("/api/error/log", {
       method: "POST",

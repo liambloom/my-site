@@ -1,6 +1,8 @@
 "use strict";
 
-class Modal { // Make this a class to make it easier to make modals
+import { Color } from "ts/global/Color.js";
+
+export class Modal { // Make this a class to make it easier to make modals
   constructor({text, buttons, closeOnBlur}) {
     buttons = buttons || "ok";
     buttons.toLowerCase();
@@ -83,35 +85,32 @@ class Modal { // Make this a class to make it easier to make modals
   static _noFocus(event) {
     if (!this.openModal.contains(event.target)) event.target.blur();
   }
+
+  private static closeUnaccepted = Modal.close.bind(Modal, false);
+  private static closeAccepted = Modal.close.bind(Modal, true);
+  private static overlay = document.getElementById("modal-overlay");
+  private static queue = [];
+  public static loading = {
+    start() {
+      /*Modal.forceOpen(this.modal);*/
+      /*main.style.opacity = 0;
+      main.style.cursor = "wait";*/
+    },
+    end() {
+      /*if (Modal.openModal === this.modal) Modal.close();
+      Modal.queue = Modal.queue.filter(modal => modal !== this.modal);*/
+      /*main.style.removeProperty("cursor");
+      main.style.opacity = 1;*/
+    },
+    //modal: document.getElementById("loading-modal"),
+    //isOpen: true
+  }
+  public static color = Color.modal;
 }
 
 Modal._scrollLock = Modal._scrollLock.bind(Modal);
 Modal._noFocus = Modal._noFocus.bind(Modal);
 Modal.close = Modal.close.bind(Modal);
-Modal._closeUnaccepted = Modal.close.bind(Modal, false);
-Modal._closeAccepted = Modal.close.bind(Modal, true);
-Modal.overlay = document.getElementById("modal-overlay");
-Modal.queue = [];
-//Modal.openModal = document.getElementById("loading-modal");
-
-Modal.loading = {
-  start () {
-    /*Modal.forceOpen(this.modal);*/
-    /*main.style.opacity = 0;
-    main.style.cursor = "wait";*/
-  },
-  end () {
-    /*if (Modal.openModal === this.modal) Modal.close();
-    Modal.queue = Modal.queue.filter(modal => modal !== this.modal);*/
-    /*main.style.removeProperty("cursor");
-    main.style.opacity = 1;*/
-  },
-  //modal: document.getElementById("loading-modal"),
-  //isOpen: true
-};
-
-Modal.color = Color.modal;
-window.Modal = Modal;
 
 function alert (text, force = false) {
   const modal = new Modal({ text: text.replace(/<(?!br>)/g, "&lt;") });

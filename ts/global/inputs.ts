@@ -15,7 +15,7 @@ function initInputLabel (input) {
   if (input.labels.length !== 1) throw new Error(`A ${input.type} input cannot have multiple labels`);
   if (input.labels[0] !== input.nextElementSibling) throw new Error(`The label for a ${input.type} input must be directly after the input in order for the css to apply`);
 }
-function initCustomInputs () {
+export function init() {
   for (let input of Array.from(document.querySelectorAll("div.switch:not([data-init])"))) { // switches
     input.setAttribute("data-init", "true");
     input.addEventListener("click", () => {
