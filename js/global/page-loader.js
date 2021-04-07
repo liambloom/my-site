@@ -7,13 +7,13 @@ let notInitialLoading = false;
 let pageNo = 1;
 var currentPage;
 
-function transition (event) {
+function transition(event) {
   event.preventDefault();
   history.pushState(menu.clearedState, "", this.href);
   loadPage();
 }
-async function transitionLinks () {
-  console.log("transitioned");
+function transitionLinks() {
+  //console.log("transitioned");
   for (let link of Array.from(document.getElementsByTagName("a"))) {
     if (new URL(link.href).origin === location.origin) {
       link.removeEventListener("click", transition);
@@ -34,7 +34,7 @@ awaitPageLoad.then(() => {
   console.log(document.readyState + " " + performance.now());
 });
 
-function loadPage () { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
+function loadPage() { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
   if (currentPage === location.href) return menu.updateMenuState().then(() => false);
   const id = `Page ${pageNo++}: ${location.href}`;
   console.time(id);
