@@ -1,5 +1,3 @@
-"use strict";
-
 // FIXME: MAJOR BUG: Going to same page twice causes error because of variable redecleration
 
 const relList = document.createElement("link").relList;
@@ -10,7 +8,7 @@ var main: HTMLElement;
 
 async function transition(this: HTMLAnchorElement, event: Event) {
   event.preventDefault();
-  history.pushState((await import("ts/global/header.js")).menu.clearedState, "", this.href);
+  history.pushState((await import("./header.js")).menu.clearedState, "", this.href);
   loadPage();
 }
 function transitionLinks() {
@@ -36,7 +34,7 @@ awaitPageLoad.then(() => {
 });
 
 function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page was navigated to, returns true, else false
-  if (currentPage === location.href) return import("ts/global/header.js").then(({ menu }) => menu.updateMenuState()).then(() => false);
+  if (currentPage === location.href) return import("./header.js").then(({ menu }) => menu.updateMenuState()).then(() => false);
   const id = `Page ${pageNo++}: ${location.href}`;
   console.time(id);
   // window.pageLoadState = "loading";
@@ -71,6 +69,13 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
               let link: HTMLLinkElement;
               let isDeferred: boolean;
               if (e instanceof HTMLScriptElement) { // This is defined as a function in globals, but I don't want to wait everything to be fetched, parsed, and run before I can do anything.
+                // TODO: it is probably better to import((<HTMLScriptElement>e).src) rather than adding a script tag
+                //    Importing it means that it is only evaluated once.
+                //    Also, maybe do import((<HTMLScriptElement>e).src).then(mod => mod.main())
+                //    This would allow me to still have code run each time the page is visited, without variable redecelerations
+                //    I would need to create a HasMain interface for that.
+                //    In order to make sure that the state is reset between pages, I should override functions that set a thing to 
+                //      happen in the future and un-make them happen when the page is unloaded (addEventListener, requestAnimationFrame, setTimeout, setInterval)
                 const og = e;
                 e = document.createElement("script");
                 for (let attr of og.attributes) e.setAttribute(attr.name, attr.value);
@@ -79,7 +84,7 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
                   link = document.createElement("link");
                   link.rel = "preload";
                   link.as = "script";
-                  link.href = (<HTMLScriptElement>e).src;
+                  link.href = (e as HTMLScriptElement).src;
                   document.head.appendChild(link);
                 }
               }
@@ -148,10 +153,10 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
       .then(() => awaitPageLoad)
       .then(() => Promise.all([
         transitionLinks(),
-        import("ts/global/inputs.js")
+        import("./inputs.js")
           .then(({ init }) => init())
       ]))
-      .catch(err => awaitPageLoad.then(async () => (await import("ts/global/globals.js")).handle(err))),
+      .catch(err => awaitPageLoad.then(async () => (await import("./globals.js")).handle(err))),
     () => {
       for (let e of Array.from(document.head.querySelectorAll("[data-for-page]"))) {
         if (e.getAttribute("data-for-page") !== location.pathname) e.remove();
@@ -165,14 +170,14 @@ function loadPage(): Promise<boolean> { // : Promise<boolean> -- If a new page w
       //window.pageLoadState = "complete";
       document.body.setAttribute("data-pageLoadState", "complete");
       window.dispatchEvent(new Event("pageload"));
-      const { menu } = await import("ts/global/header.js");
+      const { menu } = await import("./header.js");
       history.replaceState(menu.clearedState, "");
       menu.updateMenuState(); // Run asynchronously, NOT awaited
       console.timeEnd(id);
       return true;
     })
     .catch(err => awaitPageLoad
-      .then(() => import("ts/global/globals.js"))
+      .then(() => import("./globals.js"))
       .then(({ handle }) => handle(err))
       .then(() => false));
 }

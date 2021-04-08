@@ -1,30 +1,36 @@
-"use strict";
+import { Color } from "./Color.js";
+import jsx from "./jsx.js";
 
-import { Color } from "ts/global/Color.js";
+declare global {
+  interface Event {
+    accepted: boolean;
+  }
+}
+
 
 export class Modal { // Make this a class to make it easier to make modals
-  constructor({text, buttons, closeOnBlur}) {
+  constructor({text, buttons, closeOnBlur}: { text: string, buttons: "ok" | "ok/cancel", closeOnBlur: boolean }) {
     buttons = buttons || "ok";
     buttons.toLowerCase();
     if (typeof closeOnBlur !== "boolean") closeOnBlur = true;
-    const modal = parseHTML(`
-      <div class="modal popup" ${closeOnBlur ? "data-close-on-blur" : ""}>
-        <div class="content">${text}</div>
-        <div class="bottom">
-          ${
+    const modal = 
+      <div className="modal popup" {...closeOnBlur ? "data-close-on-blur" : ""}>
+        <div className="content">{text}</div>
+          {
             buttons === "ok"
-              ? `<input type="button" value="OK" class="highlight" data-close>`
+            ? <div className="bottom"><input type="button" value="OK" className="highlight" data-close /></div>
             : buttons === "ok/cancel"
-              ? `<input type="button" value="OK" class="highlight" data-close><input type="button" value="Cancel" data-cancel>`
+            ? <div className="bottom">
+                <input type="button" value="OK" className="highlight" data-close />
+                <input type="button" value="Cancel" data-cancel />
+              </div>
             : (() => { throw new Error(`Invalid button type "${buttons}". Valid types are: "ok", "ok/cancel"`); })()
           }
-        </div>
-      </div>
-    `).children[0];
+      </div>;
     document.body.appendChild(modal);
     return modal;
   }
-  static open(e) {
+  static open(e: string | Element) {
     if (this.openModal) {
       console.warn(new Error("There is already a modal open"));
       this.queue.push(e);
@@ -37,34 +43,36 @@ export class Modal { // Make this a class to make it easier to make modals
     else if (!(e instanceof HTMLElement)) new TypeError(`Modal must be of type String or HTMLElement, received type ${e.constructor.name}`);
     this.openModal = e;
     for (let button of Array.from(e.querySelectorAll("[data-cancel]"))) {
-      button.removeEventListener("click", Modal._closeUnaccepted);
-      button.addEventListener("click", Modal._closeUnaccepted);
+      button.removeEventListener("click", Modal.closeUnaccepted);
+      button.addEventListener("click", Modal.closeUnaccepted);
     }
     for (let button of Array.from(e.querySelectorAll("[data-close]"))) {
-      button.removeEventListener("click", Modal._closeAccepted);
-      button.addEventListener("click", Modal._closeAccepted);
+      button.removeEventListener("click", Modal.closeAccepted);
+      button.addEventListener("click", Modal.closeAccepted);
     }
     document.body.classList.add("blur");
     this.overlay.classList.remove("hidden");
     e.classList.add("open");
     e.dispatchEvent(new Event("opened"));
     this.scrollPosition = [scrollX, scrollY];
-    document.addEventListener("scroll", this._scrollLock);
+    document.addEventListener("scroll", this.scrollLock);
     const closeOnBlur = e.getAttribute("data-close-on-blur");
-    if (closeOnBlur === "true" || closeOnBlur === "") this.overlay.addEventListener("click", this.close);
+    if (closeOnBlur === "true" || closeOnBlur === "") this.overlay.addEventListener("click", this.closeListener);
   }
-  static forceOpen (e) {
+  static forceOpen (e: string | Element) {
     if (Modal.openModal) {
       Modal.queue.unshift(e, Modal.openModal);
       Modal.close();
     }
     else Modal.open(e);
   }
+  static closeListener = close.bind(Modal, false);
   static close (accepted = false) {
     if (!this.openModal) {
       console.warn(new Error("There are no open modals"));
       return;
     }
+
     const preEvent = new Event("preclose");
     preEvent.accepted = accepted;
     this.openModal.dispatchEvent(preEvent);
@@ -75,12 +83,12 @@ export class Modal { // Make this a class to make it easier to make modals
     event.accepted = accepted;
     this.openModal.dispatchEvent(event);
     this.openModal = undefined;
-    document.removeEventListener("scroll", this._scrollLock);
-    this.overlay.removeEventListener("click", this.close);
+    document.removeEventListener("scroll", this.scrollLock);
+    this.overlay.removeEventListener("click", this.closeListener);
     if (this.queue.length) this.open(this.queue.shift());
   }
-  static _scrollLock() {
-    scrollTo(...this.scrollPosition);
+  private static scrollLock() {
+    scrollTo(...Modal.scrollPosition);
   }
   static _noFocus(event) {
     if (!this.openModal.contains(event.target)) event.target.blur();
@@ -90,6 +98,7 @@ export class Modal { // Make this a class to make it easier to make modals
   private static closeAccepted = Modal.close.bind(Modal, true);
   private static overlay = document.getElementById("modal-overlay");
   private static queue = [];
+  private static scrollPosition: [number, number];
   public static loading = {
     start() {
       /*Modal.forceOpen(this.modal);*/
@@ -106,9 +115,10 @@ export class Modal { // Make this a class to make it easier to make modals
     //isOpen: true
   }
   public static color = Color.modal;
+  public static openModal: Element;
 }
 
-Modal._scrollLock = Modal._scrollLock.bind(Modal);
+//Modal.scrollLock = Modal.scrollLock.bind(Modal);
 Modal._noFocus = Modal._noFocus.bind(Modal);
 Modal.close = Modal.close.bind(Modal);
 

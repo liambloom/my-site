@@ -14,10 +14,10 @@ var cookies = {
   banner: document.getElementsByTagName("footer")[0]
 };
 
-document.getElementById("accept-cookies").addEventListener("click", () => {
+document.getElementById("accept-cookies")!.addEventListener("click", () => {
   cookies.areAllowed = true;
 });
-document.getElementById("deny-cookies").addEventListener("click", () => {
+document.getElementById("deny-cookies")!.addEventListener("click", () => {
   cookies.areAllowed = false;
 });
 if (cookies.areAllowed) cookies.hideBanner(); 

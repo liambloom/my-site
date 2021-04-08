@@ -1,5 +1,5 @@
-// The menu isn't perfect, but I spent way too long on it, and it works good enough
-"strict mode";
+import { Modal } from "ts/global/modal.js";
+import { handle } from "ts/global/globals.js"
 
 const openMenuContainer = document.getElementById("open-menu-container");
 
