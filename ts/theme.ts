@@ -37,6 +37,7 @@ Object.defineProperties(window, {
     enumerable: true
   },
   emphasisColor: {
+    // FIXME: --emphasis (which is set in main.css) may not be set at this point
     get: () => new Color(getComputedStyle(root).getPropertyValue("--emphasis").trim()),
     set: value => {
       value = new Color(value).hex;

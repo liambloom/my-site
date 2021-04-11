@@ -7,152 +7,132 @@ declare global {
   }
 }
 
-
-export class Modal { // Make this a class to make it easier to make modals
-  constructor({text, buttons, closeOnBlur}: { text: string, buttons: "ok" | "ok/cancel", closeOnBlur: boolean }) {
-    buttons = buttons || "ok";
-    buttons.toLowerCase();
-    if (typeof closeOnBlur !== "boolean") closeOnBlur = true;
-    const modal = 
-      <div className="modal popup" {...closeOnBlur ? "data-close-on-blur" : ""}>
-        <div className="content">{text}</div>
-          {
-            buttons === "ok"
-            ? <div className="bottom"><input type="button" value="OK" className="highlight" data-close /></div>
-            : buttons === "ok/cancel"
-            ? <div className="bottom">
-                <input type="button" value="OK" className="highlight" data-close />
-                <input type="button" value="Cancel" data-cancel />
-              </div>
-            : (() => { throw new Error(`Invalid button type "${buttons}". Valid types are: "ok", "ok/cancel"`); })()
-          }
-      </div>;
-    document.body.appendChild(modal);
-    return modal;
+export function newModal({text, buttons, closeOnBlur}: { text: string, buttons?: "ok" | "ok/cancel", closeOnBlur?: boolean }): HTMLDivElement {
+  buttons = buttons || "ok";
+  buttons.toLowerCase();
+  if (typeof closeOnBlur !== "boolean") closeOnBlur = true;
+  const modal = 
+    <div className="modal popup" {...closeOnBlur ? "data-close-on-blur" : ""}>
+      <div className="content">{text}</div>
+        {
+          buttons === "ok"
+          ? <div className="bottom"><input type="button" value="OK" className="highlight" data-close /></div>
+          : buttons === "ok/cancel"
+          ? <div className="bottom">
+              <input type="button" value="OK" className="highlight" data-close />
+              <input type="button" value="Cancel" data-cancel />
+            </div>
+          : (() => { throw new Error(`Invalid button type "${buttons}". Valid types are: "ok", "ok/cancel"`); })()
+        }
+    </div>;
+  document.body.appendChild(modal);
+  return modal as unknown as HTMLDivElement;
+}
+export function open(e: string | Element) {
+  if (openModal) {
+    console.warn(new Error("There is already a modal open"));
+    queue.push(e);
+    return;
   }
-  static open(e: string | Element) {
-    if (this.openModal) {
-      console.warn(new Error("There is already a modal open"));
-      this.queue.push(e);
-      return;
-    }
-    if (e instanceof String) e = e.toString();
-    if (typeof e === "string") {
-      e = document.getElementById(e) || document.querySelector(e);
-    }
-    else if (!(e instanceof HTMLElement)) new TypeError(`Modal must be of type String or HTMLElement, received type ${e.constructor.name}`);
-    this.openModal = e;
-    for (let button of Array.from(e.querySelectorAll("[data-cancel]"))) {
-      button.removeEventListener("click", Modal.closeUnaccepted);
-      button.addEventListener("click", Modal.closeUnaccepted);
-    }
-    for (let button of Array.from(e.querySelectorAll("[data-close]"))) {
-      button.removeEventListener("click", Modal.closeAccepted);
-      button.addEventListener("click", Modal.closeAccepted);
-    }
-    document.body.classList.add("blur");
-    this.overlay.classList.remove("hidden");
-    e.classList.add("open");
-    e.dispatchEvent(new Event("opened"));
-    this.scrollPosition = [scrollX, scrollY];
-    document.addEventListener("scroll", this.scrollLock);
-    const closeOnBlur = e.getAttribute("data-close-on-blur");
-    if (closeOnBlur === "true" || closeOnBlur === "") this.overlay.addEventListener("click", this.closeListener);
+  if (e instanceof String) e = e.toString();
+  if (typeof e === "string") {
+    e = document.getElementById(e) || document.querySelector(e)!; // This may be null, but it doesn't matter
   }
-  static forceOpen (e: string | Element) {
-    if (Modal.openModal) {
-      Modal.queue.unshift(e, Modal.openModal);
-      Modal.close();
-    }
-    else Modal.open(e);
+  if (!(e instanceof HTMLElement)) new TypeError(` must be of type String or HTMLElement, received type ${e.constructor.name}`);
+  openModal = e;
+  for (let button of Array.from(e.querySelectorAll("[data-cancel]"))) {
+    button.removeEventListener("click", closeUnaccepted);
+    button.addEventListener("click", closeUnaccepted);
   }
-  static closeListener = close.bind(Modal, false);
-  static close (accepted = false) {
-    if (!this.openModal) {
-      console.warn(new Error("There are no open modals"));
-      return;
-    }
-
-    const preEvent = new Event("preclose");
-    preEvent.accepted = accepted;
-    this.openModal.dispatchEvent(preEvent);
-    document.body.classList.remove("blur");
-    this.overlay.classList.add("hidden");
-    this.openModal.classList.remove("open");
-    const event = new Event("close");
-    event.accepted = accepted;
-    this.openModal.dispatchEvent(event);
-    this.openModal = undefined;
-    document.removeEventListener("scroll", this.scrollLock);
-    this.overlay.removeEventListener("click", this.closeListener);
-    if (this.queue.length) this.open(this.queue.shift());
+  for (let button of Array.from(e.querySelectorAll("[data-close]"))) {
+    button.removeEventListener("click", closeAccepted);
+    button.addEventListener("click", closeAccepted);
   }
-  private static scrollLock() {
-    scrollTo(...Modal.scrollPosition);
+  document.body.classList.add("blur");
+  overlay.classList.remove("hidden");
+  e.classList.add("open");
+  e.dispatchEvent(new Event("opened"));
+  scrollPosition = [scrollX, scrollY];
+  document.addEventListener("scroll", scrollLock);
+  document.addEventListener("focus", noFocus);
+  const closeOnBlur = e.getAttribute("data-close-on-blur");
+  if (closeOnBlur === "true" || closeOnBlur === "") overlay.addEventListener("click", close as () => void);
+}
+export function forceOpen(e: string | Element) {
+  if (openModal) {
+    queue.unshift(e, openModal);
+    close();
   }
-  static _noFocus(event) {
-    if (!this.openModal.contains(event.target)) event.target.blur();
+  else open(e);
+}
+export function close(accepted = false) {
+  if (!openModal) {
+    console.warn(new Error("There are no open modals"));
+    return;
   }
 
-  private static closeUnaccepted = Modal.close.bind(Modal, false);
-  private static closeAccepted = Modal.close.bind(Modal, true);
-  private static overlay = document.getElementById("modal-overlay");
-  private static queue = [];
-  private static scrollPosition: [number, number];
-  public static loading = {
-    start() {
-      /*Modal.forceOpen(this.modal);*/
-      /*main.style.opacity = 0;
-      main.style.cursor = "wait";*/
-    },
-    end() {
-      /*if (Modal.openModal === this.modal) Modal.close();
-      Modal.queue = Modal.queue.filter(modal => modal !== this.modal);*/
-      /*main.style.removeProperty("cursor");
-      main.style.opacity = 1;*/
-    },
-    //modal: document.getElementById("loading-modal"),
-    //isOpen: true
-  }
-  public static color = Color.modal;
-  public static openModal: Element;
+  const preEvent = new Event("preclose");
+  preEvent.accepted = accepted;
+  openModal.dispatchEvent(preEvent);
+  document.body.classList.remove("blur");
+  overlay.classList.add("hidden");
+  openModal.classList.remove("open");
+  const event = new Event("close");
+  event.accepted = accepted;
+  openModal.dispatchEvent(event);
+  openModal = undefined;
+  document.removeEventListener("scroll", scrollLock);
+  document.removeEventListener("focus", noFocus);
+  overlay.removeEventListener("click", close as () => void);
+  if (queue.length) open(queue.shift()!);
+}
+function scrollLock() {
+  scrollTo(...scrollPosition);
+}
+function noFocus(event: Event) {
+  if (!openModal!.contains(event.target as Node)) 
+    (event.target as HTMLElement).blur();
 }
 
-//Modal.scrollLock = Modal.scrollLock.bind(Modal);
-Modal._noFocus = Modal._noFocus.bind(Modal);
-Modal.close = Modal.close.bind(Modal);
+const closeUnaccepted: () => void = close.bind(false);
+const closeAccepted: () => void = close.bind(true);
+const overlay = document.getElementById("modal-overlay")!;
+const queue: (string | Element)[] = [];
+let scrollPosition: [number, number];
+export const color = Color.modal;
+export let openModal: Element | undefined;
 
-function alert (text, force = false) {
-  const modal = new Modal({ text: text.replace(/<(?!br>)/g, "&lt;") });
-  Modal[force ? "forceOpen" : "open"](modal);
+export function alert(text: string, force = false) {
+  const modal = newModal({ text: text.replace(/<(?!br>)/g, "&lt;") });
+  (force ? forceOpen : open)(modal);
   return new Promise(resolve => {
     modal.addEventListener("close", () => {
       resolve(undefined);
     });
   });
 }
-function confirm (text, force = false) {
-  const modal = new Modal({
+export function confirm(text: string, force = false) {
+  const modal = newModal({
     text: text.replace(/<(?!br>)/g, "&lt;"),
     buttons: "ok/cancel",
     closeOnBlur: false
   });
-  Modal[force ? "forceOpen" : "open"](modal);
+  (force ? forceOpen : open)(modal);
   return new Promise(resolve => {
     modal.addEventListener("close", ({accepted}) => {
       resolve(!!accepted);
     });
   });
 }
-function prompt (text, force = false) {
-  const modal = new Modal({
+export function prompt(text: string, force = false) {
+  const modal = newModal({
     text: `${text.replace(/<(?!br>)/g, "&lt;")}<br><input type="text">`,
     buttons: "ok/cancel"
   });
-  Modal[force ? "forceOpen" : "open"](modal);
+  (force ? forceOpen : open)(modal);
   return new Promise(resolve => {
     modal.addEventListener("close", ({accepted}) => {
-      resolve(accepted ? modal.querySelector('input[type="text"]').value : null);
+      resolve(accepted ? (modal.querySelector('input[type="text"]') as HTMLInputElement).value : null);
     });
   });
 }

@@ -29,39 +29,6 @@ function remakeElement (el) {
   return newEl;
 }
 var type = {
-  check (value, ...types) {
-    let validStrings;
-    const findStrings = e => typeof e === "string" || e instanceof String;
-    if (types.some(findStrings)) {
-      validStrings = types.filter(findStrings).map(e => e.valueOf());
-      types = types.filter(Function.neg(findStrings));
-      if (!types.includes(String)) types.push(String);
-    }
-    if (!types) throw new Error("Cannot check type without being provided with one or more types");
-    const typeString = "type " + this.getTypeString(types);
-    if (value == null || ((typeof value === "number" || value instanceof Number) && isNaN(value))) {
-      if (types.indexOf(value) === -1) throw new TypeError(`Expected ${typeString}; received type ${value}`);
-      else return;
-    }
-    if (typeof value === "object") {
-      for (let type of [Boolean, Number, String, Symbol]) { // I don't know if symbol-objects are possible, but just in case
-        if (value instanceof type) {
-          if (this.allowWrapperClasses) {
-            value = value.valueOf();
-            break;
-          }
-          else throw new TypeError(`Expected ${typeString}; received type ${value.constructor.name}-Object`);
-        }
-      }
-    }
-    if (typeof value === "string" && validStrings) {
-      if (!validStrings.includes(value)) throw new TypeError(`Expected string value ${this.toHList(validStrings)}; received ${value}`);
-    }
-    for (let type of types) {
-      if (value instanceof type || value.constructor === type) return;
-    }
-    throw new TypeError(`Expected ${typeString}; received type ${value.constructor.name}`);
-  },
   checkRange (value, min = -Infinity, max = Infinity) {
     for (let arg of [value, min, max]) this.check(arg, Number);
     if (value < min || value > max) throw new RangeError(`Expected value between ${min} and ${max}; received ${value}`);

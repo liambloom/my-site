@@ -68,8 +68,7 @@
 
   },
 
-  "files": [
-    "ts/jsx.ts",
-    "ts/test.tsx"
+  "include": [
+    "ts/*",
   ]
 }

@@ -11,6 +11,10 @@ interface ObjectConstructor {
   //entries(obj: Object): [string, any][]
 }
 
+interface String {
+  padStart(maxLength: number, padString?: string): string
+}
+
 var require = (target: string) => new Promise<any>((resolve, reject) => requireQueue.push({ target, resolve, reject }));
 const requireQueue: {target: string, resolve: cb, reject: cb}[] = [];
 
@@ -65,6 +69,18 @@ if (!Object.values) {
       return values;
     }
   });
+}
+
+if (!String.prototype.padStart) {
+  Object.defineProperty(String.prototype, "padStart", {
+    value(maxLength: number, padString = " ") {
+      let s = this;
+      for (let i = 0; s.length < maxLength; i++) {
+        s = padString[i % padString.length] + s;
+      }
+      return s;
+    }
+  })
 }
 
 /*if (!Object.entries) {
