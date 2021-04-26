@@ -1,1 +1,1 @@
-RUST_CARGO_BUILD_FLAGS="--release --features release"
+RUST_CARGO_BUILD_FLAGS="--release --features release --no-default-features"
