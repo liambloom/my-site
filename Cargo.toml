@@ -6,23 +6,23 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[lib]
-path = "server/lib.rs"
+# [lib]
+# path = "server/lib.rs"
 
 [[bin]]
 name = "server"
 path = "server/bin/main.rs"
 
 [dependencies]
-actix-web = "3"
-actix-files = "0.4"
-tera = "1"
-chrono = "0.4"
-serde = { version = "1.0", features = ["derive"] }
-sha-1 = { version = "0.9", optional = true }
+# actix-web = "3"
+# actix-files = "0.4"
+# tera = "1"
+# chrono = "0.4"
+# serde = { version = "1.0", features = ["derive"] }
+# sha-1 = { version = "0.9", optional = true }
 
 [features]
 default = ["dev"]
 dev = ["auto-reload"]
 release = []
-auto-reload = ["sha-1"]
+auto-reload = []#"sha-1"]
