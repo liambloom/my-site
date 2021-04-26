@@ -28,34 +28,34 @@ export function newModal({text, buttons, closeOnBlur}: { text: string, buttons?:
   document.body.appendChild(modal);
   return modal as unknown as HTMLDivElement;
 }
-export function open(e: string | Element) {
+export function open(e: string | Element | null): void {
   if (openModal) {
     console.warn(new Error("There is already a modal open"));
-    queue.push(e);
+    queue.push(e!);
     return;
   }
   if (e instanceof String) e = e.toString();
   if (typeof e === "string") {
-    e = document.getElementById(e) || document.querySelector(e)!; // This may be null, but it doesn't matter
+    e = document.getElementById(e) || document.querySelector(e);
   }
-  if (!(e instanceof HTMLElement)) new TypeError(` must be of type String or HTMLElement, received type ${e.constructor.name}`);
-  openModal = e;
-  for (let button of Array.from(e.querySelectorAll("[data-cancel]"))) {
+  if (!(e instanceof HTMLElement)) new TypeError(`Modal must be of type String or HTMLElement, received type ${e == null ? "null" : e.constructor.name}`);
+  openModal = e!;
+  for (let button of Array.from(e!.querySelectorAll("[data-cancel]"))) {
     button.removeEventListener("click", closeUnaccepted);
     button.addEventListener("click", closeUnaccepted);
   }
-  for (let button of Array.from(e.querySelectorAll("[data-close]"))) {
+  for (let button of Array.from(e!.querySelectorAll("[data-close]"))) {
     button.removeEventListener("click", closeAccepted);
     button.addEventListener("click", closeAccepted);
   }
   document.body.classList.add("blur");
   overlay.classList.remove("hidden");
-  e.classList.add("open");
-  e.dispatchEvent(new Event("opened"));
+  e!.classList.add("open");
+  e!.dispatchEvent(new Event("opened"));
   scrollPosition = [scrollX, scrollY];
   document.addEventListener("scroll", scrollLock);
   document.addEventListener("focus", noFocus);
-  const closeOnBlur = e.getAttribute("data-close-on-blur");
+  const closeOnBlur = e!.getAttribute("data-close-on-blur");
   if (closeOnBlur === "true" || closeOnBlur === "") overlay.addEventListener("click", close as () => void);
 }
 export function forceOpen(e: string | Element) {
@@ -63,7 +63,7 @@ export function forceOpen(e: string | Element) {
     queue.unshift(e, openModal);
     close();
   }
-  else open(e);
+  else open(e as (string | Element));
 }
 export function close(accepted = false) {
   if (!openModal) {
