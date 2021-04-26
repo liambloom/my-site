@@ -3,3 +3,4 @@ fonts/*/
 target/
 Cargo.lock
 .todo
+node_modules/
